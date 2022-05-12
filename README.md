@@ -27,3 +27,8 @@ mv .gitignore_global ~/
 ```bash
 gitcl https://github.com/dunggramer/example.git
 ```
+
+### Neovim
+#### Clean Neovim config
++ MacOS
+Remove all `~/.local/share/nvim` (nvim downloaded all plugins) and `~/.config/nvim` (nvim config)
