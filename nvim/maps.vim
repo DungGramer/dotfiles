@@ -106,8 +106,8 @@ nnoremap <leader>x :!chmod +x %<cr>
 
 " Autocmd {{{
 set listchars=tab:▸\ ,trail:·,precedes:←,extends:→,eol:↲,nbsp:␣
-autocmd InsertEnter * set list
-autocmd VimEnter,BufEnter,InsertLeave * set nolist
+" autocmd InsertEnter * set list
+" autocmd VimEnter,BufEnter,InsertLeave * set nolist
 autocmd BufNewFile,BufRead *.md,*.mdx,*.markdown :set filetype=markdown
 " }}}
 
@@ -120,3 +120,7 @@ nnoremap ,desc :-1read $HOME/.config/snippets/describe.snip<CR>V2j=f"a
 nnoremap ,it   :-1read $HOME/.config/snippets/it.snip<CR>V2j=f";i
 nnoremap ,test :-1read $HOME/.config/snippets/test.snip<CR>V2j=f";i
 " }}}
+
+"------------------------------
+" Insert mode
+inoremap <S-Tab> <C-d>

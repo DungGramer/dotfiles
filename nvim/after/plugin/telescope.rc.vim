@@ -52,7 +52,7 @@ telescope.setup{
 }
 
 require('telescope').load_extension('fzf')
-require("telescope").load_extension "file_browser"
+require("telescope").load_extension('file_browser')
 EOF
 
 nnoremap <leader>ps :lua require('telescope.builtin').grep_string( { search = vim.fn.input("Grep for > ") } )<cr>

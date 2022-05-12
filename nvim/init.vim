@@ -30,7 +30,11 @@ set mouse=a
 
 set expandtab
 "let loaded_matchparen = 1
-set shell=fish
+if has("win32") || has("win64") || has("win16")
+  set shell=cmd
+elseif has("mac")
+  set shell=fish
+endif
 set backupskip=/tmp/*,/private/tmp/*
 
 " incremental substitution (neovim)

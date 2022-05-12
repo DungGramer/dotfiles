@@ -19,19 +19,22 @@ if has("nvim")
   Plug 'tami5/lspsaga.nvim'
   Plug 'folke/lsp-colors.nvim'
   Plug 'L3MON4D3/LuaSnip'
+
+  " Autocomplete
+  Plug 'hrsh7th/nvim-cmp'
   Plug 'hrsh7th/cmp-nvim-lsp'
   Plug 'hrsh7th/cmp-buffer'
-  Plug 'hrsh7th/nvim-cmp'
+  Plug 'onsails/lspkind-nvim'
+
+
   Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
   Plug 'ryanoasis/vim-devicons'
-  Plug 'nvim-lua/popup.nvim'
 
   " Language Server Protocol
   Plug 'neovim/nvim-lspconfig'
   Plug 'williamboman/nvim-lsp-installer'
   Plug 'folke/trouble.nvim' " showing diagnostics, errors, warnings
-  Plug 'onsails/lspkind-nvim'
-  Plug 'creativenull/diagnosticls-configs-nvim'
+  "Plug 'creativenull/diagnosticls-configs-nvim'
 
   " Javascript
   Plug 'vim-test/vim-test'
@@ -39,10 +42,12 @@ if has("nvim")
 
   " File Management
   Plug 'nvim-lua/popup.nvim'
+
   Plug 'nvim-lua/plenary.nvim'
   Plug 'nvim-telescope/telescope.nvim'
   Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
   Plug 'nvim-telescope/telescope-file-browser.nvim'
+  
   Plug 'sudormrfbin/cheatsheet.nvim'
   Plug 'kyazdani42/nvim-tree.lua'
   Plug 'ThePrimeagen/harpoon'
@@ -57,7 +62,6 @@ if has("nvim")
 
   Plug 'windwp/nvim-autopairs'
   Plug 'windwp/nvim-ts-autotag'
-  Plug 'nvim-lua/completion-nvim' " Auto completion
 
   Plug 'norcalli/nvim-colorizer.lua' " Show hex color
 
@@ -65,6 +69,8 @@ if has("nvim")
   " tmux plugins
   Plug 'christoomey/vim-tmux-navigator'
   Plug 'preservim/vimux'
+
+  Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 endif
 
 Plug 'groenewege/vim-less', { 'for': 'less' }
