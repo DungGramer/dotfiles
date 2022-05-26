@@ -9,15 +9,15 @@
 	
 [alias]
     br = branch --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(contents:subject) %(color:green)(%(committerdate:relative)) [%(authorname)]' --sort=-committerdate
-	co = checkout
+    co = checkout
     cob = checkout -b
     dv = difftool -t vimdiff -y
     del = branch -D
-	graph = log --all --decorate --oneline --graph
-	last = log -1 HEAD
-	lg = !git log --pretty=format:\"%C(magenta)%h%Creset -%C(red)%d%Creset %s %C(dim green)(%cr) [%an]\" --abbrev-commit -30
-	ll = log --oneline
-	s = status
+    graph = log --all --decorate --oneline --graph
+    last = log -1 HEAD
+    lg = !git log --pretty=format:\"%C(magenta)%h%Creset -%C(red)%d%Creset %s %C(dim green)(%cr) [%an]\" --abbrev-commit -30
+    ll = log --oneline
+    s = status
     p = push
     res = !git reset --hard
     se = !git rev-list --all | xargs git grep -F
