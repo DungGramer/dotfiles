@@ -6,6 +6,9 @@
 	
 [help]
 	autocorrect = 20
+
+[color]
+	ui = true
 	
 [alias]
     br = branch --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(contents:subject) %(color:green)(%(committerdate:relative)) [%(authorname)]' --sort=-committerdate
@@ -24,5 +27,4 @@
     undo = reset HEAD~1 --mixed
 	
 	
-[color]
-	ui = true
+

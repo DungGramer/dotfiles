@@ -28,7 +28,13 @@ mv .gitignore_global ~/
 gitcl https://github.com/dunggramer/example.git
 ```
 
+#### Git clear branch not found in remote
+
+```bash
+git_clean
+```
+
 ### Neovim
 #### Clean Neovim config
-+ MacOS
++ MacOS, Ubuntu
 Remove all `~/.local/share/nvim` (nvim downloaded all plugins) and `~/.config/nvim` (nvim config)
