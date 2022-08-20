@@ -3,9 +3,19 @@
 ### Add Global gitignore
 
 ```bash
-git config --global core.excludesFile ~/.gitignore_global
 mv .gitignore_global ~/
+git config --global core.excludesFile ~/.gitignore_global
 ```
+
+```bash
+mv .gitconfig ~/
+```
+
+```bash
+mv .gitattributes_global ~/
+git config --global core.attributesfile ~/.gitattributes_global
+```
+
 
 ### Aliases
 
