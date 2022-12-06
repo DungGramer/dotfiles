@@ -3,6 +3,7 @@
 	eol = lf
 	excludesFile = ~/.gitignore_global
 	attributesfile = ~/.gitattributes_global
+	ignoreCase = true
 	
 [help]
 	autocorrect = 20
