@@ -106,6 +106,7 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 function gitcl { git clone "$1" && cd "$(basename "$1" .git)" && code .; }
 function clean_branch { git fetch -p && for branch in $(git for-each-ref --format '%(refname) %(upstream:track)' refs/heads | awk '$2 == "[gone]" {sub("refs/heads/", "", $1); print $1}'); do git branch -D $branch; done }
+function del_node_modules { find . -name "node_modules" -type d -prune -print | xargs du -chs }
 
 alias n="npm"
 alias ns='npm start'
