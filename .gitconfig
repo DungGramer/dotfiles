@@ -1,10 +1,13 @@
 [core]
 	autocrlf = false
 	eol = lf
+	safecrlf = false
+  	whitespace = -trailing-space # Don't consider trailing space change as a cause for merge conflicts
 	excludesFile = ~/.gitignore_global
 	attributesfile = ~/.gitattributes_global
-	ignoreCase = true
-	
+	ignorecase = false # Enable case-sensitive file name on Windows
+	preloadindex = true # Help speed up git status
+	fscache = true # Help speed up git status
 [help]
 	autocorrect = 20
 
@@ -12,21 +15,43 @@
 	ui = true
 	
 [alias]
-    br = branch --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(contents:subject) %(color:green)(%(committerdate:relative)) [%(authorname)]' --sort=-committerdate
-    co = checkout
-    cob = checkout -b
-    dv = difftool -t vimdiff -y
-    del = branch -D
-    graph = log --all --decorate --oneline --graph
-    last = log -1 HEAD
-    lg = !git log --pretty=format:\"%C(magenta)%h%Creset -%C(red)%d%Creset %s %C(dim green)(%cr) [%an]\" --abbrev-commit -30
-    lgchart = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
-    ll = log --oneline
-    s = status
-    p = push
-    res = !git reset --hard
-    se = !git rev-list --all | xargs git grep -F
-    undo = reset HEAD~1 --mixed
+	br = branch --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(contents:subject) %(color:green)(%(committerdate:relative)) [%(authorname)]' --sort=-committerdate
+	co = checkout
+	cob = checkout -b
+	dv = difftool -t vimdiff -y
+	del = branch -D
+	graph = log --all --decorate --oneline --graph
+	last = log -1 HEAD
+	lg = !git log --pretty=format:\"%C(magenta)%h%Creset -%C(red)%d%Creset %s %C(dim green)(%cr) [%an]\" --abbrev-commit -30
+	lgchart = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	ll = log --oneline
+	s = status
+	p = push
+	res = !git reset --hard
+	se = !git rev-list --all | xargs git grep -F
+	undo = reset HEAD~1 --mixed
 	
-	
+[log]
+	# Use abbrev SHAs whenever possible/relevant instead of full 40 chars
+	abbrevCommit = true
+	# Automatically --follow when given a single path
+	follow = true
 
+[push]
+	# Default push should only push the current branch to its push target, regardless of its remote name
+	default = upstream
+
+[pull]
+	rebase = true
+  
+[tag]
+	# Sort tags as version numbers whenever applicable, so 1.10.2 is AFTER 1.2.0.
+	sort = version:refname
+
+[versionsort]
+	prereleaseSuffix = -pre
+	prereleaseSuffix = .pre
+	prereleaseSuffix = -beta
+	prereleaseSuffix = .beta
+	prereleaseSuffix = -rc
+	prereleaseSuffix = .rc
