@@ -30,6 +30,7 @@
 	res = !git reset --hard
 	se = !git rev-list --all | xargs git grep -F
 	undo = reset HEAD~1 --mixed
+	reset-origin = !git reset --hard @{u}
 	
 [log]
 	# Use abbrev SHAs whenever possible/relevant instead of full 40 chars
