@@ -56,3 +56,6 @@
 	prereleaseSuffix = .beta
 	prereleaseSuffix = -rc
 	prereleaseSuffix = .rc
+[safe]
+	# Set all directory is safe
+	directory = *
