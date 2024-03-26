@@ -44,6 +44,12 @@
 
 [pull]
 	rebase = true
+
+[rebase]
+	useBuiltin = true
+
+[stash]
+	useBuiltin = true
   
 [tag]
 	# Sort tags as version numbers whenever applicable, so 1.10.2 is AFTER 1.2.0.
@@ -56,6 +62,14 @@
 	prereleaseSuffix = .beta
 	prereleaseSuffix = -rc
 	prereleaseSuffix = .rc
+
 [safe]
 	# Set all directory is safe
 	directory = *
+
+[submodule]
+	fetchJobs = 8 # sets the number of parallel jobs used to fetch submodules to 8.
+
+[status]
+	submoduleSummary = false # Disables the inclusion of a summary of submodule status in the git status output
+
