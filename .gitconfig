@@ -4,12 +4,34 @@
 	safecrlf = false
   	whitespace = -trailing-space # Don't consider trailing space change as a cause for merge conflicts
 	excludesFile = ~/.gitignore_global
-	attributesfile = ~/.gitattributes_global
+	whitespace = -trailing-space # Don't consider trailing space change as a cause for merge conflicts
+	safecrlf = false # Fix conflict end of line beetwen Windows and Linux
+	commitGraph = true # use a commit history cache to significantly speed up history operations, such as git log with the --graph option
 	ignorecase = false # Enable case-sensitive file name on Windows
 	preloadindex = true # Help speed up git status
 	fscache = true # Help speed up git status
+	prefetch = true # Git pre-fetches objects before they are needed, improving the speed of operations like git checkout.
+
+	# Optimize for large repo
+	fsmonitor = true
+	untrackedcache = true # index that remembers the results of the untracked search
+	
+	compressobjects = true # compress objects in the repository, helping with storage and performance.
+	deltaCacheSize = 128m # Controls the amount of memory Git uses for delta compression when packing objects
+	packedGitLimit = 512m # Limits the maximum size of a pack file kept in memory.
+	packedGitWindowSize = 512m # Memory size used when accessing pack files
+	bigFileThreshold = 50m # Files larger than this threshold will not be packed into the Git history to avoid slowing down Git operations.
+
+[pack]
+	windowMemory = 100m # Maximum memory size used to compress data in a git pack-objects run
+	packSizeLimit = 100m # Limits the maximum size of a pack file when Git creates new pack files.
+
 [help]
 	autocorrect = 20
+
+[diff]
+	patience = true
+	algorithm = histogram
 
 [color]
 	ui = true
@@ -38,15 +60,21 @@
 	# Automatically --follow when given a single path
 	follow = true
 
+[fetch]
+	# Delete inapplicable remote-tracking branches
+	prune = true
+	parallel = 8
+	threads = 8
 [push]
 	# Default push should only push the current branch to its push target, regardless of its remote name
 	default = upstream
-
+	autoSetupRemote = true
 [pull]
 	rebase = true
 
 [rebase]
 	useBuiltin = true
+  	autoSquash = true # useful for `git commit --fixup <hash>` (https://fle.github.io/git-tip-keep-your-branch-clean-with-fixup-and-autosquash.html)
 
 [stash]
 	useBuiltin = true
@@ -72,4 +100,23 @@
 
 [status]
 	submoduleSummary = false # Disables the inclusion of a summary of submodule status in the git status output
-
+[gc]
+	auto = 256 # run garbage collection after a certain number of commits
+	autoPackLimit = 100 # ensures that garbage collection will only pack large repositories when the number of loose objects exceeds a specific threshold.
+	rerereResolved = true # remembers resolved merge conflicts, which speeds up subsequent merges
+	aggressive = true # runs a more aggressive garbage collection, optimizing storage at the cost of longer execution time.
+	writeCommitGraph = true
+[merge]
+	ignore-space-change = true
+	conflictstyle = diff3 # this allows to show 3 panes in meld, https://stackoverflow.com/questions/27417656/should-diff3-be-default-conflictstyle-on-git/70387424#70387424
+[rerere]
+	enabled = 1 # Reuse recorded resolution of conflicted merges: https://git-scm.com/docs/git-rerere
+[filter "lfs"]
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+[svn]
+	rmdir = true
+[feature]
+	manyFiles = true # enable a newer index file version that is smaller in size and thus gets rewritten faster after modifying files in the index
