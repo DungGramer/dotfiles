@@ -16,6 +16,13 @@ mv .gitattributes_global ~/
 git config --global core.attributesfile ~/.gitattributes_global
 ```
 
+### Add Nushell config
+
+```bash
+mv ./nushell/config.nu ~/AppData/Roaming/nushell/config.nu
+mv ./nushell/env.nu ~/AppData/Roaming/nushell/env.nu
+```
+
 
 ### Aliases
 
