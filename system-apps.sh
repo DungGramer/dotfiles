@@ -43,13 +43,20 @@ echo "==> [4/6] Firmware (fwupd)"
 sudo fwupdmgr refresh --force >/dev/null 2>&1 || true
 sudo fwupdmgr get-updates || echo "  (không có firmware update)"
 
-# ── 5. inotify watchers (bắt buộc cho web/JS dev project lớn) ──────────────
-echo "==> [5/6] inotify watchers"
+# ── 5. inotify watchers + TrackPoint ───────────────────────────────────────
+echo "==> [5/6] inotify watchers + TrackPoint sensitivity"
 sudo tee /etc/sysctl.d/99-dev.conf >/dev/null <<'EOF'
 fs.inotify.max_user_watches=524288
 fs.inotify.max_user_instances=512
 EOF
 sudo sysctl --system >/dev/null 2>&1 || true
+
+# Giảm tốc TrackPoint (độc lập với chuột ngoài). Tăng/giảm 0.5 theo ý (nhỏ hơn = chậm hơn).
+sudo tee /etc/udev/hwdb.d/71-trackpoint.hwdb >/dev/null <<'EOF'
+evdev:name:TPPS/2 Synaptics TrackPoint:dmi:*
+ LIBINPUT_ATTR_TRACKPOINT_MULTIPLIER=0.5
+EOF
+sudo systemd-hwdb update && sudo udevadm trigger 2>/dev/null || true
 
 # ── 6. Kiểm tra hardware video decode ──────────────────────────────────────
 echo "==> [6/6] Kiểm tra VA-API (hardware video decode)"
