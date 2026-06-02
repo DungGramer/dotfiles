@@ -50,3 +50,15 @@ keybind = ctrl+shift+e=equalize_splits
 keybind = ctrl+shift+r=reload_config
 keybind = ctrl+shift+w=close_surface
 keybind = f11=toggle_fullscreen
+
+# Font size
+keybind = ctrl+equal=increase_font_size:1
+keybind = ctrl+minus=decrease_font_size:1
+keybind = ctrl+zero=reset_font_size
+
+# Xoá màn hình + scrollback
+keybind = ctrl+shift+k=clear_screen
+
+# Nhảy giữa các lần chạy lệnh (nhờ shell-integration OSC133) — hữu ích khi KHÔNG ở trong tmux
+keybind = ctrl+shift+up=jump_to_prompt:-1
+keybind = ctrl+shift+down=jump_to_prompt:1

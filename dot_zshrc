@@ -97,14 +97,53 @@ alias gd='git diff'
 alias glog='git log --oneline --graph --decorate'
 alias lg='lazygit'
 
+# git (mở rộng)
+alias gco='git checkout'
+alias gsw='git switch'
+alias gb='git branch'
+alias gcm='git commit -m'
+alias gca='git commit --amend'
+alias gst='git stash'
+alias gf='git fetch --all --prune'
+alias grb='git rebase'
+alias gpf='git push --force-with-lease'
+
+# docker / compose
 alias dc='docker compose'
+alias dcu='docker compose up -d'
+alias dcd='docker compose down'
+alias dcl='docker compose logs -f'
+alias dex='docker exec -it'
 alias dps='docker ps'
 alias di='docker images'
+
+# kubernetes
 alias k='kubectl'
+alias kgp='kubectl get pods'
+alias kgs='kubectl get svc'
+alias kgd='kubectl get deployments'
+alias kaf='kubectl apply -f'
+alias kl='kubectl logs -f'
+alias kx='kubectl exec -it'
+alias kns='kubectl config set-context --current --namespace'
+
+# điều hướng thư mục & tiện ích
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias mkdir='mkdir -p'
+alias reload='exec zsh'
+mkcd() { mkdir -p "$1" && cd "$1"; }   # tạo thư mục rồi vào luôn
 
 # ─────────────────────────── Keybindings ─────────────────────────────────
 bindkey '^[[1;5C' forward-word        # Ctrl+→
 bindkey '^[[1;5D' backward-word       # Ctrl+←
+bindkey '^[[H'  beginning-of-line     # Home
+bindkey '^[[F'  end-of-line           # End
+bindkey '^[[3~' delete-char           # Delete
+# Ctrl-X Ctrl-E: sửa lệnh đang gõ trong $EDITOR (nvim)
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey '^X^E' edit-command-line
 
 # ──────────────────── Syntax highlighting (PHẢI cuối) ─────────────────────
 [[ -f $ZSH_PLUGINS/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh ]] \
