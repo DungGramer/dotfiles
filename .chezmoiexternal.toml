@@ -13,3 +13,35 @@
     type = "git-repo"
     url = "https://github.com/Aloxaf/fzf-tab.git"
     refreshPeriod = "168h"
+
+[".local/share/zsh/plugins/zsh-history-substring-search"]
+    type = "git-repo"
+    url = "https://github.com/zsh-users/zsh-history-substring-search.git"
+    refreshPeriod = "168h"
+
+# tmux plugins (chạy trực tiếp bằng run-shell trong .tmux.conf, không cần TPM)
+[".config/tmux/plugins/tmux-resurrect"]
+    type = "git-repo"
+    url = "https://github.com/tmux-plugins/tmux-resurrect.git"
+    refreshPeriod = "168h"
+
+[".config/tmux/plugins/tmux-continuum"]
+    type = "git-repo"
+    url = "https://github.com/tmux-plugins/tmux-continuum.git"
+    refreshPeriod = "168h"
+
+[".config/tmux/plugins/tmux-yank"]
+    type = "git-repo"
+    url = "https://github.com/tmux-plugins/tmux-yank.git"
+    refreshPeriod = "168h"
+
+[".config/tmux/plugins/tmux-fzf"]
+    type = "git-repo"
+    url = "https://github.com/sainnhe/tmux-fzf.git"
+    refreshPeriod = "168h"
+
+# bat theme Catppuccin (dùng chung cho bat + delta)
+[".config/bat/themes/catppuccin"]
+    type = "git-repo"
+    url = "https://github.com/catppuccin/bat.git"
+    refreshPeriod = "720h"

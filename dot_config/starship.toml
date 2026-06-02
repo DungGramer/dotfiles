@@ -6,8 +6,10 @@ $hostname\
 $directory\
 $git_branch\
 $git_status\
-$nodejs\
+$git_metrics\
+$kubernetes\
 $docker_context\
+$nodejs\
 $python\
 $golang\
 $rust\
@@ -25,3 +27,18 @@ min_time = 1000
 [character]
 success_symbol = "[❯](green)"
 error_symbol = "[❯](red)"
+
+# Hiện context + namespace k8s -> tránh "nhầm cluster"
+[kubernetes]
+disabled = false
+symbol = "☸ "
+style = "blue"
+format = '[$symbol$context( \($namespace\))]($style) '
+
+# Số dòng thêm/bớt khi đang sửa
+[git_metrics]
+disabled = false
+
+[docker_context]
+symbol = " "
+only_with_files = true

@@ -26,6 +26,10 @@ setopt AUTO_PUSHD              # cd tự push vào dir stack
 setopt PUSHD_IGNORE_DUPS
 setopt INTERACTIVE_COMMENTS    # cho phép # comment ở prompt
 setopt NO_BEEP
+setopt EXTENDED_GLOB           # glob mạnh hơn: ^, ~, #
+setopt GLOB_DOTS               # glob khớp cả file ẩn (.*)
+setopt NUMERIC_GLOB_SORT       # sort số theo giá trị (file1, file2, file10)
+setopt NO_FLOW_CONTROL         # giải phóng Ctrl-S / Ctrl-Q
 
 # ──────────────────────────── Completion ─────────────────────────────────
 ZCOMPDUMP="$HOME/.cache/zsh/zcompdump"
@@ -125,7 +129,9 @@ alias kgd='kubectl get deployments'
 alias kaf='kubectl apply -f'
 alias kl='kubectl logs -f'
 alias kx='kubectl exec -it'
-alias kns='kubectl config set-context --current --namespace'
+alias kctx='kubectx'           # đổi cluster/context
+alias kns='kubens'             # đổi namespace
+alias lzd='lazydocker'         # TUI docker
 
 # điều hướng thư mục & tiện ích
 alias ...='cd ../..'
@@ -148,6 +154,17 @@ bindkey '^X^E' edit-command-line
 # ──────────────────── Syntax highlighting (PHẢI cuối) ─────────────────────
 [[ -f $ZSH_PLUGINS/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh ]] \
   && source $ZSH_PLUGINS/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+
+# history-substring-search: gõ vài ký tự rồi ↑/↓ để lọc lịch sử khớp (nạp sau FSH)
+if [[ -f $ZSH_PLUGINS/zsh-history-substring-search/zsh-history-substring-search.zsh ]]; then
+  source $ZSH_PLUGINS/zsh-history-substring-search/zsh-history-substring-search.zsh
+  bindkey '^[[A' history-substring-search-up      # ↑
+  bindkey '^[[B' history-substring-search-down    # ↓
+  bindkey '^[OA' history-substring-search-up       # ↑ (application mode)
+  bindkey '^[OB' history-substring-search-down     # ↓
+  bindkey '^P'   history-substring-search-up
+  bindkey '^N'   history-substring-search-down
+fi
 
 # Chốt an toàn bracketed paste (fix ^[[200~ khi paste)
 zle_highlight=('paste:none')

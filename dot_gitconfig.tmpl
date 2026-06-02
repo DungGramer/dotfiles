@@ -13,8 +13,12 @@
 	default = current
 [rebase]
 	autoStash = true
+	updateRefs = true
 [merge]
 	conflictStyle = zdiff3
+[rerere]
+	enabled = true
+	autoUpdate = true
 [diff]
 	colorMoved = default
 	algorithm = histogram
@@ -22,15 +26,19 @@
 	ui = auto
 [branch]
 	sort = -committerdate
+[help]
+	autocorrect = prompt
 [core]
 	editor = nvim
 	pager = delta
+	excludesfile = ~/.config/git/ignore
 [gpg]
 	format = ssh
 [gpg "ssh"]
 	allowedSignersFile = ~/.config/git/allowed_signers
 [commit]
 	gpgsign = true
+	verbose = true
 [tag]
 	gpgsign = true
 [interactive]
@@ -39,6 +47,12 @@
 	navigate = true
 	line-numbers = true
 	side-by-side = true
+	syntax-theme = "Catppuccin Mocha"
+
+# Identity riêng cho dự án cá nhân: bỏ comment + sửa email rồi để repo cá nhân trong ~/personal/
+# (mặc định toàn cục đang dùng email công ty ở trên)
+#[includeIf "gitdir:~/personal/"]
+#	path = ~/.config/git/config-personal
 [alias]
 	st = status -sb
 	co = checkout

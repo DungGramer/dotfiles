@@ -11,3 +11,18 @@ delta = "latest"
 jq = "latest"
 neovim = "latest"
 tree-sitter = "latest"
+k9s = "latest"
+kubectx = "latest"
+kubens = "latest"
+stern = "latest"
+lazydocker = "latest"
+tlrc = "latest"
+yazi = "latest"
+btop = "latest"
+dust = "latest"
+duf = "latest"
+jless = "latest"
+
+[settings]
+lockfile = true
+idiomatic_version_file_enable_tools = []

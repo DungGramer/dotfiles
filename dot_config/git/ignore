@@ -1,0 +1,36 @@
+# Global gitignore (~/.config/git/ignore) — rác OS/editor/tooling, áp cho mọi repo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor / IDE
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.code-workspace
+.nvim.lua
+.exrc
+
+# Logs & temp
+*.log
+*.tmp
+.cache/
+
+# Env & secrets (an toàn mặc định)
+.env
+.env.local
+.env.*.local
+
+# direnv / mise
+.direnv/
+
+# Build/dep phổ biến (chỉ khi project chưa tự ignore)
+.DS_Store
+node_modules/
+__pycache__/
+*.pyc
+.venv/
