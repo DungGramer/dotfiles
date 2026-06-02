@@ -20,6 +20,7 @@ sudo apt-get install -y \
     timeshift \
     gnome-tweaks gnome-shell-extension-manager \
     flameshot vlc \
+    intel-gpu-tools \
     pkg-config libssl-dev zlib1g-dev libffi-dev libbz2-dev libreadline-dev libsqlite3-dev
 # Nâng stack VA-API Intel lên bản PPA (đồng bộ iHD driver + libva + GMM cho Arrow Lake)
 sudo apt-get install -y --only-upgrade \
