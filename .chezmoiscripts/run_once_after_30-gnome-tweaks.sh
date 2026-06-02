@@ -14,6 +14,10 @@ gsettings set org.gnome.desktop.peripherals.keyboard delay 'uint32 250' 2>/dev/n
 gsettings set org.gnome.desktop.peripherals.touchpad speed 0.5 2>/dev/null || true
 gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true 2>/dev/null || true
 
+# TrackPoint/chuột: giảm tốc (TrackPoint mặc định quá nhanh).
+# LƯU Ý: ảnh hưởng cả chuột ngoài. Muốn chỉ TrackPoint chậm -> dùng hwdb trong system-apps.sh rồi đặt lại 0.0.
+gsettings set org.gnome.desktop.peripherals.mouse speed -0.5 2>/dev/null || true
+
 # Âm thanh: cho phép vượt 100% (loa laptop hơi nhỏ)
 gsettings set org.gnome.desktop.sound allow-volume-above-100-percent true 2>/dev/null || true
 
