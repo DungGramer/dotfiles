@@ -1,0 +1,12 @@
+#!/bin/sh
+# Tự cài/đồng bộ toàn bộ tool trong mise config sau khi chezmoi apply.
+# Tự chạy lại mỗi khi dot_config/mise/config.toml thay đổi (nhờ hash bên dưới).
+# mise-config-hash: {{ include "dot_config/mise/config.toml" | sha256sum }}
+
+if command -v mise >/dev/null 2>&1; then
+    echo ">> mise install (cài tool từ config)…"
+    mise install -y
+    mise reshim 2>/dev/null || true
+else
+    echo "!! Chưa có mise — cài mise trước: curl https://mise.run | sh"
+fi

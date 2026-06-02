@@ -1,0 +1,3 @@
+# Các file chỉ thuộc repo, KHÔNG apply vào $HOME
+README.md
+install.sh

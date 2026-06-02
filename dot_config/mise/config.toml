@@ -1,0 +1,13 @@
+[tools]
+chezmoi = "latest"
+node = "24"
+python = "3.12"
+lazygit = "latest"
+gh = "latest"
+yq = "latest"
+atuin = "latest"
+direnv = "latest"
+delta = "latest"
+jq = "latest"
+neovim = "latest"
+tree-sitter = "latest"

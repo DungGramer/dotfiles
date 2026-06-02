@@ -1,0 +1,117 @@
+# ~/.zshrc — quản lý bởi chezmoi. Sửa ở: ~/.local/share/chezmoi/dot_zshrc
+# Áp dụng thay đổi: chezmoi apply   |   Sửa nhanh: chezmoi edit ~/.zshrc
+
+# ─────────────────────────────── Core env ────────────────────────────────
+export EDITOR=nvim
+export VISUAL=nvim
+export PATH="$HOME/.local/bin:$HOME/.fzf/bin:$PATH"
+
+ZSH_PLUGINS="$HOME/.local/share/zsh/plugins"
+
+# ─────────────────────────────── History ─────────────────────────────────
+HISTFILE=~/.zsh_history
+HISTSIZE=100000
+SAVEHIST=100000
+setopt HIST_IGNORE_DUPS        # bỏ lệnh trùng liền kề
+setopt HIST_IGNORE_ALL_DUPS    # bỏ mọi lệnh trùng cũ
+setopt HIST_IGNORE_SPACE       # lệnh bắt đầu bằng space -> không lưu
+setopt HIST_REDUCE_BLANKS
+setopt HIST_VERIFY             # !! không chạy ngay, cho sửa trước
+setopt SHARE_HISTORY           # chia sẻ history giữa các tab
+setopt EXTENDED_HISTORY
+
+# ─────────────────────────────── Options ─────────────────────────────────
+setopt AUTO_CD                 # gõ tên thư mục = cd
+setopt AUTO_PUSHD              # cd tự push vào dir stack
+setopt PUSHD_IGNORE_DUPS
+setopt INTERACTIVE_COMMENTS    # cho phép # comment ở prompt
+setopt NO_BEEP
+
+# ──────────────────────────── Completion ─────────────────────────────────
+ZCOMPDUMP="$HOME/.cache/zsh/zcompdump"
+[[ -d ${ZCOMPDUMP:h} ]] || mkdir -p ${ZCOMPDUMP:h}
+autoload -Uz compinit
+# Chỉ chạy compinit đầy đủ (kiểm tra bảo mật) khi dump cũ >24h; còn lại -C cho nhanh.
+if [[ -n $ZCOMPDUMP(#qN.mh+24) ]]; then
+  compinit -d "$ZCOMPDUMP"
+else
+  compinit -C -d "$ZCOMPDUMP"
+fi
+
+zstyle ':completion:*' menu no                      # để fzf-tab lo menu
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'   # không phân biệt hoa thường
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*:descriptions' format '[%d]'
+zstyle ':completion:*:git-checkout:*' sort false
+# fzf-tab: dùng eza để preview thư mục khi cd
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza --tree --level=2 --icons --color=always $realpath'
+zstyle ':fzf-tab:complete:*:*' fzf-preview '[[ -d $realpath ]] && eza --tree --level=2 --icons --color=always $realpath || batcat --color=always --style=numbers --line-range=:200 $realpath 2>/dev/null'
+
+# ───────────────────────────── Plugins ───────────────────────────────────
+# (clone tự động bởi chezmoi external — xem .chezmoiexternal.toml)
+[[ -f $ZSH_PLUGINS/fzf-tab/fzf-tab.plugin.zsh ]] && source $ZSH_PLUGINS/fzf-tab/fzf-tab.plugin.zsh
+[[ -f $ZSH_PLUGINS/zsh-autosuggestions/zsh-autosuggestions.zsh ]] && source $ZSH_PLUGINS/zsh-autosuggestions/zsh-autosuggestions.zsh
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+
+# ───────────────────────────── FZF config ────────────────────────────────
+export FZF_DEFAULT_COMMAND='fdfind --type f --hidden --follow --exclude .git'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND='fdfind --type d --hidden --follow --exclude .git'
+export FZF_DEFAULT_OPTS="
+--height=50%
+--layout=reverse
+--border=rounded
+--cycle
+--info=inline
+--preview-window=right:60%"
+export FZF_CTRL_T_OPTS="--preview 'batcat --color=always --style=numbers --line-range=:300 {}'"
+export FZF_ALT_C_OPTS="--preview 'eza --tree --level=2 --icons --color=always {}'"
+
+# ──────────────────────── Tool initialization ────────────────────────────
+eval "$(starship init zsh)"
+eval "$(zoxide init zsh)"
+eval "$(mise activate zsh)"
+command -v direnv >/dev/null && eval "$(direnv hook zsh)"
+# fzf keybindings/completion (Ctrl-T = file, Alt-C = cd)
+source <(fzf --zsh)
+# atuin: lịch sử thông minh trên Ctrl-R (giữ Up = history thường)
+command -v atuin >/dev/null && eval "$(atuin init zsh --disable-up-arrow)"
+
+# ───────────────────────────── Aliases ───────────────────────────────────
+alias ls='eza --icons'
+alias ll='eza -lah --icons --git'
+alias la='eza -a --icons'
+alias lt='eza --tree --level=2 --icons'
+alias tree='eza --tree --icons'
+alias cat='batcat'
+alias vim='nvim'
+alias v='nvim'
+
+alias gs='git status -sb'
+alias ga='git add'
+alias gc='git commit'
+alias gp='git push'
+alias gl='git pull'
+alias gd='git diff'
+alias glog='git log --oneline --graph --decorate'
+alias lg='lazygit'
+
+alias dc='docker compose'
+alias dps='docker ps'
+alias di='docker images'
+alias k='kubectl'
+
+# ─────────────────────────── Keybindings ─────────────────────────────────
+bindkey '^[[1;5C' forward-word        # Ctrl+→
+bindkey '^[[1;5D' backward-word       # Ctrl+←
+
+# ──────────────────── Syntax highlighting (PHẢI cuối) ─────────────────────
+[[ -f $ZSH_PLUGINS/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh ]] \
+  && source $ZSH_PLUGINS/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+
+# Chốt an toàn bracketed paste (fix ^[[200~ khi paste)
+zle_highlight=('paste:none')
+if (( $+widgets[bracketed-paste] )); then
+  bindkey '^[[200~' bracketed-paste
+fi
