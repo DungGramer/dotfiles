@@ -139,6 +139,8 @@ alias ....='cd ../../..'
 alias mkdir='mkdir -p'
 alias reload='exec zsh'
 mkcd() { mkdir -p "$1" && cd "$1"; }   # tạo thư mục rồi vào luôn
+alias guide='batcat --paging=always "$HOME/.local/share/chezmoi/GUIDE.md"'   # mở cẩm nang
+alias keys='batcat --paging=always "$HOME/.local/share/chezmoi/KEYBINDINGS.md"'
 
 # ─────────────────────────── Keybindings ─────────────────────────────────
 bindkey '^[[1;5C' forward-word        # Ctrl+→
