@@ -1,0 +1,21 @@
+# ~/.ssh/config — quản lý bởi chezmoi (private_dot_ssh/private_config)
+
+# Cài đặt chung
+Host *
+    AddKeysToAgent yes
+    IdentitiesOnly yes
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+
+# GitHub — key cá nhân của máy này
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_github
+
+# Identity riêng cho công ty (bỏ comment khi cần, nhớ sinh key id_ed25519_work):
+#   git remote dùng URL: git@github-work:Org/repo.git
+# Host github-work
+#     HostName github.com
+#     User git
+#     IdentityFile ~/.ssh/id_ed25519_work
