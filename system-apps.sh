@@ -25,16 +25,16 @@ sudo apt-get install -y \
 sudo apt-get install -y --only-upgrade \
     intel-media-va-driver-non-free libva2 libva-drm2 libva-wayland2 libva-x11-2 libigdgmm12 || true
 
-# ── 2. Flatpak: Flathub + Teams (community) + OBS ──────────────────────────
-echo "==> [2/5] Flatpak: Flathub + Teams + OBS"
+# ── 2. Flatpak: Flathub + Teams + OBS + DBeaver ────────────────────────────
+echo "==> [2/6] Flatpak: Flathub + Teams + OBS + DBeaver"
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 flatpak install -y --noninteractive flathub \
     com.github.IsmaelMartinez.teams_for_linux \
-    com.obsproject.Studio
+    com.obsproject.Studio \
+    io.dbeaver.DBeaverCommunity
 
-# ── 3. Snap: DBeaver + Postman ─────────────────────────────────────────────
-echo "==> [3/5] Snap: DBeaver + Postman"
-sudo snap install dbeaver-ce || true
+# ── 3. Snap: Postman ───────────────────────────────────────────────────────
+echo "==> [3/6] Snap: Postman"
 sudo snap install postman || true
 
 # ── 4. Firmware: kiểm tra & cập nhật ───────────────────────────────────────
