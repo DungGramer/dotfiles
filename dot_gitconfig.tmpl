@@ -1,6 +1,7 @@
 [user]
 	name = {{ .name | quote }}
 	email = {{ .email | quote }}
+	signingkey = ~/.ssh/id_ed25519_github.pub
 [init]
 	defaultBranch = main
 [pull]
@@ -24,6 +25,14 @@
 [core]
 	editor = nvim
 	pager = delta
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	allowedSignersFile = ~/.config/git/allowed_signers
+[commit]
+	gpgsign = true
+[tag]
+	gpgsign = true
 [interactive]
 	diffFilter = delta --color-only
 [delta]
