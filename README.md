@@ -2,19 +2,26 @@
 
 Setup dev cá nhân — quản lý bằng [chezmoi](https://chezmoi.io), tool cài bằng [mise](https://mise.jdx.dev).
 
+Một nhánh duy nhất cho mọi máy: Linux, macOS, Windows. Khác biệt giữa các OS xử lý bằng
+template + `.chezmoiignore`, không tách nhánh. Không có danh tính cá nhân nào nhúng sẵn —
+`chezmoi init` sẽ hỏi tên/email/khoá ký, nên bạn clone về là ra config của chính bạn.
+
 ## Thành phần
 
-| Lĩnh vực | Công cụ |
-|---|---|
-| Terminal | Ghostty |
-| Multiplexer | tmux (smart pane nav Ctrl-hjkl, copy clipboard OSC52) |
-| Shell | zsh + autosuggestions + fast-syntax-highlighting + fzf-tab |
-| Prompt | starship |
-| History | atuin (Ctrl-R) |
-| Editor | Neovim + LazyVim |
-| Git | delta (diff đẹp), alias, push.autoSetupRemote |
-| CLI | eza, bat, fzf, zoxide, ripgrep, fd, jq, yq, lazygit, gh, direnv |
-| Version manager | mise (node, python, neovim, + các CLI tool) |
+| Lĩnh vực | Công cụ | Linux/macOS | Windows |
+|---|---|:---:|:---:|
+| Terminal | Ghostty | ✅ | ✗ (chưa có bản Windows) |
+| Multiplexer | tmux | ✅ | ✗ |
+| Shell | zsh + plugins / nushell | zsh | nushell |
+| Prompt | starship | ✅ | ✅ |
+| History | atuin (Ctrl-R) | ✅ | ✅ |
+| Editor | Neovim + LazyVim | ✅ | ✅ |
+| Git | delta, alias, ký commit bằng SSH | ✅ | ✅ |
+| CLI | eza, bat, fzf, zoxide, ripgrep, fd, jq, yq, lazygit, gh, direnv | ✅ | ✅ |
+| Version manager | mise | ✅ | ✅ |
+
+Shell là thứ **duy nhất** không dùng chung được (zsh và nushell là hai ngôn ngữ khác nhau).
+Mọi thứ còn lại là một config cho mọi máy.
 
 ## Máy mới — 1 lệnh
 
@@ -47,6 +54,30 @@ Thêm tool mới: `mise use -g <tool>` → `chezmoi re-add ~/.config/mise/config
 ## Cấu trúc
 
 - `dot_*`            → file `~/.${...}` (vd `dot_zshrc` → `~/.zshrc`)
-- `*.tmpl`           → template (chèn tên/email theo máy)
-- `.chezmoiexternal.toml` → tự clone zsh plugins
+- `AppData/Roaming/` → chỉ Windows (destDir là `%USERPROFILE%`, `AppData` không có dấu chấm nên không cần `dot_`)
+- `*.tmpl`           → template (danh tính, khác biệt OS)
+- `.chezmoiignore`   → template; loại file theo OS. Match theo **target path**, không phải source path
+- `.chezmoiexternal.toml` → tự clone zsh/tmux plugins (bỏ qua trên Windows)
 - `.chezmoiscripts/` → script chạy khi apply (cài tool qua mise)
+
+## Cấu hình riêng tư
+
+Repo này là public. Những thứ không được lên đây — token, proxy công ty, host nội bộ,
+email riêng cho từng nhóm dự án — để ở `~/.config/git/config-local`:
+
+```ini
+# ~/.config/git/config-local  (KHÔNG commit vào repo public)
+[credential "https://git.noi-bo.company.vn"]
+	provider = generic
+# Email công ty chỉ áp cho repo trong ~/work/
+[includeIf "gitdir:~/work/"]
+	path = ~/.config/git/config-work
+```
+
+Nếu phải chỉnh thứ gì hạ mức bảo mật để lách hạ tầng công ty (ví dụ `http.sslVerify`),
+luôn **scope theo host** — `[http "https://host-cu-the"]` — đừng bao giờ để ở mức global,
+vì như vậy là tắt kiểm tra chứng chỉ cho cả `github.com` lẫn mọi nguồn khác.
+
+`~/.gitconfig` kết thúc bằng `[include] path = ~/.config/git/config-local`. Git **bỏ qua
+trong im lặng** nếu file đó không tồn tại, nên ai clone repo này về cũng chạy được ngay.
+Muốn đồng bộ phần riêng tư giữa các máy thì để nó trong một repo private riêng.

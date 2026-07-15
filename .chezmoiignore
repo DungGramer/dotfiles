@@ -1,3 +1,5 @@
+# File này là template, và match theo TARGET path (đường dẫn trong $HOME), không phải source path.
+
 # Các file chỉ thuộc repo, KHÔNG apply vào $HOME
 README.md
 install.sh
@@ -5,3 +7,34 @@ KEYBINDINGS.md
 SYSTEM-SETUP.md
 system-apps.sh
 GUIDE.md
+
+# ---------------------------------------------------------------------------
+# Khác biệt theo OS. Nguyên tắc: mặc định là dùng chung, chỉ loại trừ khi tool
+# không tồn tại trên OS đó. Dùng `ne windows` (không phải `eq linux`) cho các
+# tool Linux+macOS, để máy macOS sau này tự động nhận mà không phải sửa lại.
+# ---------------------------------------------------------------------------
+
+{{ if ne .chezmoi.os "windows" }}
+# nushell chỉ chạy trên máy Windows
+AppData/**
+{{ end }}
+
+{{ if eq .chezmoi.os "windows" }}
+# zsh: Windows dùng nushell thay thế
+.zshrc
+.local/share/zsh/**
+# tmux và ghostty: chưa có bản Windows (ghostty mới chỉ Linux/macOS)
+.tmux.conf
+.config/tmux/**
+.config/ghostty/**
+{{ end }}
+
+{{ if ne .chezmoi.os "linux" }}
+# systemd user environment + fcitx5: chỉ có trên Linux
+.config/environment.d/**
+{{ end }}
+
+{{ if not .signingkey }}
+# Không ký commit thì không cần danh sách signer
+.config/git/allowed_signers
+{{ end }}

@@ -1,0 +1,3 @@
+{{- /* Sinh từ chính key của máy đang chạy, không nhúng key của chủ repo.
+       Nếu không khai signingkey thì file này bị .chezmoiignore loại hẳn. */ -}}
+{{ .email }} {{ include (joinPath .chezmoi.homeDir .signingkey) | trim }}

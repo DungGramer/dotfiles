@@ -1,6 +1,12 @@
-{{- $name := promptStringOnce . "name" "Họ tên (dùng cho git)" "DungGramer" -}}
-{{- $email := promptStringOnce . "email" "Email (dùng cho git)" "v.dungnc10@vinsmartfuture.tech" -}}
+{{- /* Không đặt giá trị mặc định cho name/email: repo này người khác cũng dùng,
+       để sẵn danh tính của chủ repo thì rất dễ Enter cho nhanh rồi commit nhầm tên. */ -}}
+{{- $name := promptStringOnce . "name" "Họ tên (dùng cho git)" -}}
+{{- $email := promptStringOnce . "email" "Email (dùng cho git)" -}}
+{{- $signingkey := promptStringOnce . "signingkey" "SSH public key để ký commit, tính từ $HOME (để trống = không ký)" ".ssh/id_ed25519.pub" -}}
 
 [data]
     name = {{ $name | quote }}
     email = {{ $email | quote }}
+    # Tên file key khác nhau tuỳ máy nên phải hỏi, không đoán được.
+    # Để rỗng thì toàn bộ phần ký commit trong ~/.gitconfig tự tắt.
+    signingkey = {{ $signingkey | quote }}

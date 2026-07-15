@@ -1,67 +1,215 @@
+# ~/.gitconfig
+#
+# Danh tính KHÔNG nhúng sẵn: chezmoi hỏi lúc `chezmoi init` (xem .chezmoi.toml.tmpl),
+# nên ai clone repo này về cũng ra config của chính họ.
+#
+# Cấu hình riêng tư (token, proxy công ty, host nội bộ, email khác) để ở
+# ~/.config/git/config-local — xem [include] ở cuối file.
+#
+# Các key sau đã bị loại vì git KHÔNG hiểu (đối chiếu `git help -c` + tài liệu git):
+#   core.prefetch             -> không có; prefetch là task của `git maintenance`
+#   core.compressobjects      -> không có; key thật là core.compression
+#   core.deltaCacheSize       -> sai section; key thật là pack.deltaCacheSize
+#   diff.patience             -> không có; dùng diff.algorithm
+#   fetch.threads             -> không có; chỉ có fetch.parallel
+#   gc.aggressive             -> không có; chỉ có gc.aggressiveDepth/Window
+#   merge.ignore-space-change -> không có
+#   rebase.useBuiltin         -> git 2.26 đã gỡ, nay vô nghĩa
+#   stash.useBuiltin          -> git 2.22 đã gỡ, nay vô nghĩa
+#   gc.rerereResolved = true  -> key thật nhưng nhận SỐ NGÀY, không phải bool
+
 [user]
 	name = {{ .name | quote }}
 	email = {{ .email | quote }}
-	signingkey = ~/.ssh/id_ed25519_github.pub
+{{- if .signingkey }}
+	signingkey = {{ printf "~/%s" .signingkey | quote }}
+{{- end }}
+
 [init]
 	defaultBranch = main
-[pull]
-	rebase = true
+
+[core]
+	# Repo luôn lưu LF, bất kể OS nào checkout
+	autocrlf = input
+	eol = lf
+	safecrlf = false
+	# Đổi khoảng trắng cuối dòng không tính là xung đột merge
+	whitespace = -trailing-space
+	excludesfile = ~/.config/git/ignore
+	editor = {{ if eq .chezmoi.os "windows" }}code --wait{{ else }}nvim{{ end }}
+{{- if lookPath "delta" }}
+	pager = delta
+{{- end }}
+
+	# --- Tăng tốc repo lớn ---
+	commitGraph = true
+	preloadIndex = true
+	fscache = true
+	fsmonitor = true
+	untrackedCache = true
+	# Phân biệt hoa/thường như Linux, tránh lệch khi làm chung repo đa nền tảng
+	ignorecase = false
+	packedGitLimit = 512m
+	packedGitWindowSize = 512m
+	bigFileThreshold = 50m
+{{- if eq .chezmoi.os "windows" }}
+	longpaths = true
+{{- end }}
+
+[feature]
+	# Bật loạt tối ưu cho repo nhiều file (index v4, ...)
+	manyFiles = true
+
+[pack]
+	windowMemory = 100m
+	packSizeLimit = 100m
+	deltaCacheSize = 128m
+
+[help]
+	# 'prompt' = hỏi trước khi chạy lệnh nó đoán.
+	# Giá trị cũ '20' nghĩa là TỰ CHẠY sau 2 giây — dễ chạy nhầm lệnh.
+	autocorrect = prompt
+
+[diff]
+	algorithm = histogram
+	colorMoved = zebra
+	renames = copies
+	mnemonicPrefix = true
+	indentHeuristic = true
+
+[color]
+	ui = true
+
+[log]
+	abbrevCommit = true
+	follow = true
+
 [fetch]
 	prune = true
+	pruneTags = true
+	parallel = 8
+	writeCommitGraph = true
+
 [push]
-	autoSetupRemote = true
 	default = current
+	autoSetupRemote = true
+	followTags = true
+
+[pull]
+	rebase = true
+
 [rebase]
+	autoSquash = true
 	autoStash = true
 	updateRefs = true
+
 [merge]
+	# zdiff3 = diff3 nhưng bỏ phần trùng ở cả 2 nhánh, dễ đọc hơn (git >= 2.35)
 	conflictStyle = zdiff3
+
 [rerere]
 	enabled = true
 	autoUpdate = true
-[diff]
-	colorMoved = default
-	algorithm = histogram
-[column]
-	ui = auto
+
 [branch]
 	sort = -committerdate
-[help]
-	autocorrect = prompt
-[core]
-	editor = nvim
-	pager = delta
-	excludesfile = ~/.config/git/ignore
+
+[tag]
+	sort = version:refname
+{{- if .signingkey }}
+	gpgsign = true
+{{- end }}
+
+[column]
+	ui = auto
+
+[versionsort]
+	prereleaseSuffix = -pre
+	prereleaseSuffix = .pre
+	prereleaseSuffix = -beta
+	prereleaseSuffix = .beta
+	prereleaseSuffix = -rc
+	prereleaseSuffix = .rc
+
+[gc]
+	auto = 256
+	autoPackLimit = 100
+	writeCommitGraph = true
+
+[submodule]
+	fetchJobs = 8
+
+[status]
+	submoduleSummary = false
+
+[safe]
+	# Tắt kiểm tra ownership thư mục. Tiện khi làm qua Docker/WSL/ổ ngoài,
+	# đổi lại mất một lớp bảo vệ. Bỏ dòng này nếu dùng máy dùng chung.
+	directory = *
+
+[filter "lfs"]
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+
+[commit]
+	verbose = true
+{{- if .signingkey }}
+	gpgsign = true
+
 [gpg]
 	format = ssh
+
 [gpg "ssh"]
 	allowedSignersFile = ~/.config/git/allowed_signers
-[commit]
-	gpgsign = true
-	verbose = true
-[tag]
-	gpgsign = true
+{{- end }}
+{{ if lookPath "delta" }}
 [interactive]
 	diffFilter = delta --color-only
+
 [delta]
 	navigate = true
 	line-numbers = true
 	side-by-side = true
 	syntax-theme = "Catppuccin Mocha"
-
-# Identity riêng cho dự án cá nhân: bỏ comment + sửa email rồi để repo cá nhân trong ~/personal/
-# (mặc định toàn cục đang dùng email công ty ở trên)
-#[includeIf "gitdir:~/personal/"]
-#	path = ~/.config/git/config-personal
+{{ end }}
 [alias]
+	# --- xem ---
+	s = status
 	st = status -sb
+	ll = log --oneline
+	last = log -1 HEAD
+	lg = !git log --pretty=format:\"%C(magenta)%h%Creset -%C(red)%d%Creset %s %C(dim green)(%cr) [%an]\" --abbrev-commit -30
+	graph = log --all --decorate --oneline --graph
+	lgchart = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	br = branch --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(contents:subject) %(color:green)(%(committerdate:relative)) [%(authorname)]' --sort=-committerdate
+	dc = diff --cached
+	# --- sửa ---
 	co = checkout
-	br = branch
+	cob = checkout -b
+	del = branch -D
 	ci = commit
 	cm = commit -m
 	amend = commit --amend --no-edit
-	lg = log --oneline --graph --decorate --all
-	last = log -1 HEAD
+	p = push
+	# Force-push nhưng không đè mất việc người khác
+	push-with-lease = push --force-with-lease
+	# --- lùi lại ---
 	unstage = reset HEAD --
-	undo = reset --soft HEAD~1
-	dc = diff --cached
+	# undo: bỏ commit cuối, giữ thay đổi ở working tree
+	undo = reset HEAD~1 --mixed
+	# uncommit: bỏ commit cuối, giữ thay đổi ở stage
+	uncommit = reset HEAD~1 --soft
+	res = !git reset --hard
+	reset-origin = !git reset --hard @{u}
+	# --- tìm ---
+	# se <chuỗi>: tìm chuỗi trong toàn bộ lịch sử
+	se = !git rev-list --all | xargs git grep -F
+	dv = difftool -t vimdiff -y
+
+# Cấu hình riêng tư / máy công ty: token, proxy, host nội bộ, email khác.
+# File này KHÔNG nằm trong repo public. Git bỏ qua trong im lặng nếu nó không
+# tồn tại, nên người khác clone repo này về vẫn chạy bình thường.
+[include]
+	path = ~/.config/git/config-local
