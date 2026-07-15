@@ -18,10 +18,23 @@ git config --global core.attributesfile ~/.gitattributes_global
 
 ### Add Nushell config
 
+Copy (do not `mv`, that would remove the files from this repo):
+
 ```bash
-mv ./nushell/config.nu ~/AppData/Roaming/nushell/config.nu
-mv ./nushell/env.nu ~/AppData/Roaming/nushell/env.nu
+cp ./nushell/config.nu ~/AppData/Roaming/nushell/config.nu
+cp ./nushell/env.nu ~/AppData/Roaming/nushell/env.nu
 ```
+
+`autoload/` holds overrides for generated vendor autoload files. Nushell loads it after
+`vendor/autoload/`, which is the only reliable place to override the `starship.nu` that
+`config.nu` regenerates on every startup:
+
+```bash
+mkdir -p ~/AppData/Roaming/nushell/autoload
+cp ./nushell/autoload/*.nu ~/AppData/Roaming/nushell/autoload/
+```
+
+See [Config for Windows version 2025](https://github.com/DungGramer/dotfiles/wiki/Config-for-Windows-version-2025) for what each override does.
 
 
 ### Aliases

@@ -19,6 +19,13 @@ $env.VISUAL = "code"
 # Python
 # $env.PYTHONPATH = ($env.USERPROFILE | path join "python")
 
+$env.PATH = (
+    $env.PATH
+    | split row (char esep)
+    | prepend ($env.HOME | path join ".local/bin")
+    | uniq
+)
+
 # -------------------- Development Tools --------------------
 # Starship prompt (if using)
 # mkdir ~/.cache/starship
