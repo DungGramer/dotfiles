@@ -18,10 +18,17 @@ stern = "latest"
 lazydocker = "latest"
 tlrc = "latest"
 yazi = "latest"
-btop = "latest"
 dust = "latest"
 duf = "latest"
+# Quét secret cho hook .githooks/pre-commit
+gitleaks = "latest"
+{{- if ne .chezmoi.os "windows" }}
+
+# Thượng nguồn không phát hành bản Windows (mise báo "unsupported env: windows/amd64").
+# Để ngoài guard thì `mise install` trên MỌI máy Windows đều fail, không riêng máy nào.
+btop = "latest"
 jless = "latest"
+{{- end }}
 
 [settings]
 lockfile = true

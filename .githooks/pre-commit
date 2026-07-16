@@ -1,0 +1,41 @@
+#!/bin/sh
+# Gate chặn secret lọt vào repo public.
+#
+# Bật trên máy mới:   git config core.hooksPath .githooks
+# (hook không tự chạy nếu chỉ clone, git cố tình không cho repo tự thực thi code)
+#
+# Vì sao cần: repo này public. Một secret lọt vào là nằm trong git history vĩnh viễn,
+# phải rotate + rewrite history. Đây là loại lỗi không thể chống bằng trí nhớ.
+
+set -e
+
+# gitleaks cài qua mise. Thử shim trước, rồi tới đường dẫn cài trực tiếp.
+if command -v gitleaks >/dev/null 2>&1; then
+    GITLEAKS=gitleaks
+elif [ -n "$(command -v mise)" ] && [ -x "$(mise where gitleaks 2>/dev/null)/gitleaks.exe" ]; then
+    GITLEAKS="$(mise where gitleaks)/gitleaks.exe"
+elif [ -n "$(command -v mise)" ] && [ -x "$(mise where gitleaks 2>/dev/null)/gitleaks" ]; then
+    GITLEAKS="$(mise where gitleaks)/gitleaks"
+else
+    echo "pre-commit: KHÔNG tìm thấy gitleaks — không quét được secret."
+    echo "            Cài bằng: mise use -g gitleaks"
+    echo "            Cố tình bỏ qua: git commit --no-verify"
+    exit 1
+fi
+
+"$GITLEAKS" git --staged --pre-commit --redact --no-banner || {
+    echo ""
+    echo "  ┌───────────────────────────────────────────────────────────┐"
+    echo "  │  COMMIT BỊ CHẶN: phát hiện secret trong thay đổi đã stage │"
+    echo "  └───────────────────────────────────────────────────────────┘"
+    echo ""
+    echo "  Repo này là PUBLIC. Secret lọt vào là nằm trong history vĩnh viễn."
+    echo ""
+    echo "  Cần làm:"
+    echo "    1. Gỡ secret khỏi file đang stage"
+    echo "    2. Thứ riêng tư/công ty -> ~/.config/git/config-local (không commit)"
+    echo "    3. Nếu secret đã lộ ra ngoài -> ROTATE nó ngay"
+    echo ""
+    echo "  Chắc chắn là báo nhầm? Thêm vào .gitleaksignore, đừng dùng --no-verify."
+    exit 1
+}

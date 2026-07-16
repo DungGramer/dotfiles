@@ -56,6 +56,21 @@
 	longpaths = true
 {{- end }}
 
+{{- if eq .chezmoi.os "windows" }}
+
+[http]
+	# Dùng kho chứng chỉ của Windows thay vì CA bundle riêng của OpenSSL.
+	#
+	# Quan trọng nếu máy nằm sau proxy giải mã TLS (mạng công ty): CA của proxy đã
+	# được cài vào kho chứng chỉ Windows nên trình duyệt vào được, nhưng git mặc định
+	# dùng OpenSSL — thứ đọc CA bundle riêng và không thấy CA đó, nên báo lỗi chứng chỉ.
+	#
+	# Cách chữa hay bị dùng nhầm là `http.sslVerify = false`, tức là tắt kiểm tra chứng
+	# chỉ cho MỌI host kể cả github.com. Đổi backend mới là chữa đúng bệnh: xác minh
+	# vẫn bật đầy đủ, mà vẫn qua được proxy.
+	sslBackend = schannel
+{{- end }}
+
 [feature]
 	# Bật loạt tối ưu cho repo nhiều file (index v4, ...)
 	manyFiles = true

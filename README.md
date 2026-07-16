@@ -60,6 +60,18 @@ Thêm tool mới: `mise use -g <tool>` → `chezmoi re-add ~/.config/mise/config
 - `.chezmoiexternal.toml` → tự clone zsh/tmux plugins (bỏ qua trên Windows)
 - `.chezmoiscripts/` → script chạy khi apply (cài tool qua mise)
 
+## Gate chặn secret
+
+Repo này public, nên một secret lọt vào là nằm trong git history vĩnh viễn. Có
+`.githooks/pre-commit` chạy [gitleaks](https://github.com/gitleaks/gitleaks) trên phần đã
+stage. Git không tự bật hook khi clone (cố ý, để repo không tự chạy code của nó), nên bật tay:
+
+```bash
+git config core.hooksPath .githooks   # chạy 1 lần sau khi clone
+```
+
+gitleaks đã nằm trong `mise` nên `mise install` là có.
+
 ## Cấu hình riêng tư
 
 Repo này là public. Những thứ không được lên đây — token, proxy công ty, host nội bộ,
