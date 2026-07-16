@@ -1,33 +1,49 @@
+# Version pin cứng, KHÔNG dùng "latest".
+#
+# Lý do: mục tiêu của repo này là máy mới ra giống hệt máy cũ, và người khác clone về
+# ra đúng thứ mình đang chạy. "latest" phá cả hai — mỗi lần cài là một version khác,
+# tuỳ thời điểm. Bug "máy tôi chạy được" bắt đầu từ đây.
+#
+# Nâng version:  mise outdated          # xem cái nào có bản mới
+#                mise upgrade --bump    # bump số trong chính file này
+# rồi commit lại — để việc đổi version là một thay đổi có chủ đích, thấy được trong git log.
+
 [tools]
-chezmoi = "latest"
-node = "24"
-python = "3.12"
-lazygit = "latest"
-gh = "latest"
-yq = "latest"
-atuin = "latest"
-direnv = "latest"
-delta = "latest"
-jq = "latest"
-neovim = "latest"
-tree-sitter = "latest"
-k9s = "latest"
-kubectx = "latest"
-kubens = "latest"
-stern = "latest"
-lazydocker = "latest"
-tlrc = "latest"
-yazi = "latest"
-dust = "latest"
-duf = "latest"
+chezmoi = "2.71.0"
+node = "24.18.0"
+python = "3.12.13"
+neovim = "0.12.4"
+tree-sitter = "0.26.11"
+
+# Git
+lazygit = "0.63.0"
+gh = "2.96.0"
+delta = "0.19.2"
 # Quét secret cho hook .githooks/pre-commit
-gitleaks = "latest"
+gitleaks = "8.30.1"
+
+# Shell / CLI
+atuin = "18.17.0"
+direnv = "2.37.1"
+jq = "1.8.2"
+yq = "4.53.3"
+yazi = "26.5.6"
+tlrc = "1.13.1"
+dust = "1.2.4"
+duf = "0.9.1"
+
+# Kubernetes / Docker
+k9s = "0.51.0"
+kubectx = "0.11.0"
+kubens = "0.11.0"
+stern = "1.34.0"
+lazydocker = "0.25.2"
 {{- if ne .chezmoi.os "windows" }}
 
 # Thượng nguồn không phát hành bản Windows (mise báo "unsupported env: windows/amd64").
-# Để ngoài guard thì `mise install` trên MỌI máy Windows đều fail, không riêng máy nào.
-btop = "latest"
-jless = "latest"
+# Để ngoài guard thì `mise install` fail trên MỌI máy Windows, không riêng máy nào.
+btop = "1.4.7"
+jless = "0.9.0"
 {{- end }}
 
 [settings]
