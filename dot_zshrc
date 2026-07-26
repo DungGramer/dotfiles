@@ -73,14 +73,25 @@ export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-ran
 export FZF_ALT_C_OPTS="--preview 'eza --tree --level=2 --icons --color=always {}'"
 
 # ──────────────────────── Tool initialization ────────────────────────────
-eval "$(starship init zsh)"
-eval "$(zoxide init zsh)"
-eval "$(mise activate zsh)"
-command -v direnv >/dev/null && eval "$(direnv hook zsh)"
+# mise PHẢI đứng TRƯỚC mọi init bên dưới. starship/zoxide/fzf/atuin đều do mise cài,
+# mà `mise activate zsh` đặt PATH qua hook precmd — hook chỉ chạy SAU khi .zshrc nạp xong,
+# nên nếu init tool trước dòng này thì chúng chưa có trên PATH (starship/zoxide/fzf báo
+# "command not found", direnv/atuin bị guard `command -v` cho trượt trong im lặng).
+# `--shims` đưa shims lên PATH NGAY; activate thường (dòng sau) lo đổi version theo thư mục.
+# (Đo được bằng Docker Ubuntu: thiếu dòng --shims thì cả prompt lẫn Ctrl-R đều chết.)
+if command -v mise >/dev/null; then
+  eval "$(mise activate zsh --shims)"
+  eval "$(mise activate zsh)"
+fi
+# Guard `command -v`: tool do mise cài, nếu lần cài đầu lỗi (vd rate-limit GitHub) thì
+# không phun lỗi mỗi lần mở shell — lần apply sau cài xong là tự có.
+command -v starship >/dev/null && eval "$(starship init zsh)"
+command -v zoxide   >/dev/null && eval "$(zoxide init zsh)"
+command -v direnv   >/dev/null && eval "$(direnv hook zsh)"
 # fzf keybindings/completion (Ctrl-T = file, Alt-C = cd)
-source <(fzf --zsh)
+command -v fzf      >/dev/null && source <(fzf --zsh)
 # atuin: lịch sử thông minh trên Ctrl-R (giữ Up = history thường)
-command -v atuin >/dev/null && eval "$(atuin init zsh --disable-up-arrow)"
+command -v atuin    >/dev/null && eval "$(atuin init zsh --disable-up-arrow)"
 
 # ───────────────────────────── Aliases ───────────────────────────────────
 alias ls='eza --icons'

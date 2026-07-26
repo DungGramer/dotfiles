@@ -111,6 +111,18 @@ chezmoi managed                                 # danh sách target chezmoi qu�
 - **`mise activate` đặt PATH qua hook `pre_prompt`** → chỉ có tác dụng trong REPL. Script và lệnh
   non-interactive sẽ không thấy tool nào. Vì thế `env.nu` prepend thẳng thư mục shims.
 
+### zsh (Linux/macOS)
+- **`mise activate zsh` cũng đặt PATH qua hook `precmd`** — hook chỉ chạy SAU khi `.zshrc` nạp
+  xong. Nên mọi dòng init tool do mise cài (`starship`/`zoxide`/`fzf`/`atuin`) đặt SAU
+  `mise activate` vẫn **không thấy tool** lúc khởi động: starship/zoxide/fzf phun "command not
+  found", direnv/atuin bị guard `command -v` cho trượt trong im lặng → mất prompt + mất Ctrl-R.
+  Cách đúng: `eval "$(mise activate zsh --shims)"` **trước** mọi init (đưa shims lên PATH ngay),
+  rồi mới `mise activate zsh` cho hook đổi version theo thư mục. Đây là bản sao của cách `env.nu`
+  prepend shims cho nushell. Đo được bằng Docker Ubuntu — static analysis không bắt được vì trên
+  máy cũ các tool này từng cài ngoài PATH nên init chạy được.
+- **Tránh giả định "tool luôn có trên PATH lúc `.zshrc` chạy".** Guard init bằng `command -v` để
+  lần cài đầu lỗi (vd rate-limit GitHub của mise aqua backend) không phun lỗi mỗi lần mở shell.
+
 ### chezmoi trên Windows
 - **Script `.sh` không tự chạy được.** Cần `[interpreters.sh]` trong config (xem `.chezmoi.toml.tmpl`).
 - **Không dùng `lookPath "bash"` trên Windows**: `bash` thường trúng `C:\Windows\System32\bash.exe`
