@@ -1,0 +1,9 @@
+# Ép LF cho mọi thứ chạy trên Linux/macOS. Repo giờ sửa nhiều trên Windows và là public,
+# nên một contributor để autocrlf=true là đủ commit CRLF vào -> script .sh gãy trên Linux
+# với lỗi khó hiểu kiểu `bash\r: not found`, còn chezmoi thì đổ CRLF vào ~/.zshrc.
+* text=auto eol=lf
+
+# Nhị phân: đừng đụng eol.
+*.png binary
+*.zip binary
+*.ico binary

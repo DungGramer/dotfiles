@@ -38,6 +38,24 @@ kubectx = "0.11.0"
 kubens = "0.11.0"
 stern = "1.34.0"
 lazydocker = "0.25.2"
+
+# CLI nền — .zshrc và config nushell gọi THẲNG mấy tool này lúc khởi động shell.
+# Không chỗ nào khác cài chúng: system-apps.sh chỉ lo driver + app GUI, install.sh chỉ
+# apt zsh/git/curl/wget/unzip. Thiếu là zsh báo lỗi mỗi lần mở và mất prompt; nushell
+# thì vỡ hẳn config vì `source` là parse-time.
+bat = "0.26.1"
+ripgrep = "15.1.0"
+fd = "10.4.2"
+zoxide = "0.10.0"
+starship = "1.26.0"
+fzf = "0.74.0"
+# eza phải chỉ đích danh backend ubi: registry của mise chỉ map eza -> cargo:eza,
+# mà build bằng cargo thì cần sẵn Rust toolchain. ubi lấy thẳng binary từ GitHub release.
+"ubi:eza-community/eza" = "0.23.5"
+{{- if eq .chezmoi.os "windows" }}
+# Chỉ Windows: carapace là completion cho nushell; bên zsh dùng fzf-tab nên không cần.
+carapace = "1.7.3"
+{{- end }}
 {{- if ne .chezmoi.os "windows" }}
 
 # Thượng nguồn không phát hành bản Windows (mise báo "unsupported env: windows/amd64").

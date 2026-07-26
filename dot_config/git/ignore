@@ -1,9 +1,27 @@
 # Global gitignore (~/.config/git/ignore) — rác OS/editor/tooling, áp cho mọi repo
+#
+# Thay cho ~/.gitignore_global cũ (đường dẫn XDG, git tự đọc kể cả khi không khai
+# core.excludesfile). Đã gộp toàn bộ rule từ file cũ, trừ pnpm-lock.yaml/yarn.lock:
+# lockfile phải được commit, ignore toàn cục làm CI và máy khác cài lệch version.
 
 # OS
 .DS_Store
+.DS_Store?
+.DS_*
+._*
+.Spotlight-V100
+.Trashes
 Thumbs.db
-desktop.ini
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.stackdump
+*.lnk
+*.msix
+# NUL: Claude Code trên Windows thỉnh thoảng đẻ ra file tên "nul"
+nul
 
 # Editor / IDE
 *.swp
@@ -14,23 +32,82 @@ desktop.ini
 *.code-workspace
 .nvim.lua
 .exrc
+.history/
+.ionide
 
-# Logs & temp
+# Claude Code — cấu hình máy cá nhân, không thuộc về repo người khác
+CLAUDE.md
+.claude/
+
+# Logs & databases
 *.log
+log/
+logs
+pids
+*.pid
+*.seed
 *.tmp
+.cache
 .cache/
+*.sql
+*.sqlite
+
+# Backup
+**/*.backup.*
+**/*.back.*
 
 # Env & secrets (an toàn mặc định)
 .env
 .env.local
 .env.*.local
+.*.env
 
 # direnv / mise
 .direnv/
 
 # Build/dep phổ biến (chỉ khi project chưa tự ignore)
-.DS_Store
 node_modules/
+bower_components
+.npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.phpunit-watcher-cache.php
 __pycache__/
 *.pyc
 .venv/
+.next
+.swc
+out
+coverage
+lib-cov
+.grunt
+.lock-wscript
+.node_repl_history
+
+# Compiled
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Archives — nên unpack rồi commit source, git tự nén tốt hơn
+*.7z
+*.jar
+*.rar
+*.zip
+*.gz
+*.gzip
+*.tgz
+*.bzip
+*.bzip2
+*.bz2
+*.xz
+*.lzma
+*.cab
+*.xar
+*.dmg
+*.egg
+*.txz

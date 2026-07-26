@@ -49,7 +49,7 @@ zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*:git-checkout:*' sort false
 # fzf-tab: dùng eza để preview thư mục khi cd
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza --tree --level=2 --icons --color=always $realpath'
-zstyle ':fzf-tab:complete:*:*' fzf-preview '[[ -d $realpath ]] && eza --tree --level=2 --icons --color=always $realpath || batcat --color=always --style=numbers --line-range=:200 $realpath 2>/dev/null'
+zstyle ':fzf-tab:complete:*:*' fzf-preview '[[ -d $realpath ]] && eza --tree --level=2 --icons --color=always $realpath || bat --color=always --style=numbers --line-range=:200 $realpath 2>/dev/null'
 
 # ───────────────────────────── Plugins ───────────────────────────────────
 # (clone tự động bởi chezmoi external — xem .chezmoiexternal.toml)
@@ -59,9 +59,9 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 
 # ───────────────────────────── FZF config ────────────────────────────────
-export FZF_DEFAULT_COMMAND='fdfind --type f --hidden --follow --exclude .git'
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_ALT_C_COMMAND='fdfind --type d --hidden --follow --exclude .git'
+export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
 export FZF_DEFAULT_OPTS="
 --height=50%
 --layout=reverse
@@ -69,7 +69,7 @@ export FZF_DEFAULT_OPTS="
 --cycle
 --info=inline
 --preview-window=right:60%"
-export FZF_CTRL_T_OPTS="--preview 'batcat --color=always --style=numbers --line-range=:300 {}'"
+export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-range=:300 {}'"
 export FZF_ALT_C_OPTS="--preview 'eza --tree --level=2 --icons --color=always {}'"
 
 # ──────────────────────── Tool initialization ────────────────────────────
@@ -88,7 +88,7 @@ alias ll='eza -lah --icons --git'
 alias la='eza -a --icons'
 alias lt='eza --tree --level=2 --icons'
 alias tree='eza --tree --icons'
-alias cat='batcat'
+alias cat='bat'
 alias vim='nvim'
 alias v='nvim'
 
@@ -139,8 +139,11 @@ alias ....='cd ../../..'
 alias mkdir='mkdir -p'
 alias reload='exec zsh'
 mkcd() { mkdir -p "$1" && cd "$1"; }   # tạo thư mục rồi vào luôn
-alias guide='batcat --paging=always "$HOME/.local/share/chezmoi/GUIDE.md"'   # mở cẩm nang
-alias keys='batcat --paging=always "$HOME/.local/share/chezmoi/KEYBINDINGS.md"'
+# Hỏi chezmoi đường dẫn source thay vì hardcode ~/.local/share/chezmoi: hai file này nằm
+# trong .chezmoiignore (không apply vào $HOME) nên chỉ tồn tại ở source, mà source đổi chỗ
+# được bằng `chezmoi init --source=...`.
+alias guide='bat --paging=always "$(chezmoi source-path)/GUIDE.md"'   # mở cẩm nang
+alias keys='bat --paging=always "$(chezmoi source-path)/KEYBINDINGS.md"'
 
 # ─────────────────────────── Keybindings ─────────────────────────────────
 bindkey '^[[1;5C' forward-word        # Ctrl+→

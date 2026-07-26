@@ -7,6 +7,15 @@ KEYBINDINGS.md
 SYSTEM-SETUP.md
 system-apps.sh
 GUIDE.md
+CLAUDE.md
+
+# Neo bằng "/" để chỉ khớp ~/.gitignore ở gốc. Không neo thì pattern khớp mọi cấp,
+# nuốt luôn ~/.config/nvim/.gitignore (đến từ dot_config/nvim/dot_gitignore).
+/.gitignore
+
+# Sổ tay + hook riêng tư: chỉ có ở nhánh chezmoi, không apply vào $HOME.
+# (Nhánh public-release không có thư mục này; dòng ignore thừa ra thì vô hại.)
+.personal/**
 
 # ---------------------------------------------------------------------------
 # Khác biệt theo OS. Nguyên tắc: mặc định là dùng chung, chỉ loại trừ khi tool
@@ -34,7 +43,10 @@ AppData/**
 .config/environment.d/**
 {{ end }}
 
-{{ if not .signingkey }}
-# Không ký commit thì không cần danh sách signer
+{{ if not (and .signingkey (stat (joinPath .chezmoi.homeDir .signingkey))) }}
+# Không ký commit thì không cần danh sách signer.
+# Phải kiểm CẢ sự tồn tại của file key, không chỉ .signingkey: allowed_signers.tmpl
+# `include` file đó, thiếu file là chết TOÀN BỘ `chezmoi apply` chứ không riêng file này.
+# (Điều kiện lặp ở dot_gitconfig.tmpl — sửa thì sửa cả hai.)
 .config/git/allowed_signers
 {{ end }}

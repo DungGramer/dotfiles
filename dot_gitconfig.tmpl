@@ -1,8 +1,22 @@
+{{- /* Chỉ bật ký commit khi signingkey ĐƯỢC KHAI **VÀ** file key có thật.
+       Máy mới thường chưa sinh SSH key, trong khi prompt signingkey lại có sẵn default
+       ".ssh/id_ed25519.pub" — bấm Enter cho nhanh là dính. Chỉ kiểm .signingkey (không kiểm
+       file) thì gitconfig ra đời với gpgsign=true trỏ vào key không tồn tại => MỌI `git commit`
+       fail với "Couldn't load public key", còn allowed_signers.tmpl thì `include` file thiếu
+       làm chết luôn cả `chezmoi apply`.
+       Kiểm bằng stat nên tự lành: sinh key xong, lần apply sau tự bật ký.
+       Điều kiện này lặp ở .chezmoiignore (để loại allowed_signers) — sửa thì sửa cả hai. */ -}}
+{{- $signing := and .signingkey (stat (joinPath .chezmoi.homeDir .signingkey)) -}}
 # ~/.gitconfig
 #
 # Danh tính KHÔNG nhúng sẵn: chezmoi hỏi lúc `chezmoi init` (xem .chezmoi.toml.tmpl),
 # nên ai clone repo này về cũng ra config của chính họ.
 #
+{{- if and .signingkey (not $signing) }}
+# Ký commit ĐANG TẮT: đã khai signingkey = "{{ .signingkey }}" nhưng không tìm thấy file đó.
+# Sinh key rồi chạy lại `chezmoi apply` là tự bật:
+#     ssh-keygen -t ed25519 -C "{{ .email }}"
+{{- end }}
 # Cấu hình riêng tư (token, proxy công ty, host nội bộ, email khác) để ở
 # ~/.config/git/config-local — xem [include] ở cuối file.
 #
@@ -21,7 +35,7 @@
 [user]
 	name = {{ .name | quote }}
 	email = {{ .email | quote }}
-{{- if .signingkey }}
+{{- if $signing }}
 	signingkey = {{ printf "~/%s" .signingkey | quote }}
 {{- end }}
 
@@ -37,9 +51,12 @@
 	whitespace = -trailing-space
 	excludesfile = ~/.config/git/ignore
 	editor = {{ if eq .chezmoi.os "windows" }}code --wait{{ else }}nvim{{ end }}
-{{- if lookPath "delta" }}
+	# Không gác bằng `lookPath "delta"`: lookPath chạy lúc RENDER, mà lúc render thì script
+	# mise chưa kịp cài delta -> lần cài đầu trên máy mới KHÔNG BAO GIỜ có delta, phải apply
+	# lần hai mới có. Tệ hơn: kết quả phụ thuộc PATH của shell chạy apply, nên apply từ chỗ
+	# thiếu delta sẽ GỠ delta ra khỏi file này -> gitconfig nhấp nháy.
+	# delta nằm trong mise config của mọi OS nên chắc chắn được cài; khai thẳng cho tất định.
 	pager = delta
-{{- end }}
 
 	# --- Tăng tốc repo lớn ---
 	commitGraph = true
@@ -131,7 +148,7 @@
 
 [tag]
 	sort = version:refname
-{{- if .signingkey }}
+{{- if $signing }}
 	gpgsign = true
 {{- end }}
 
@@ -170,7 +187,7 @@
 
 [commit]
 	verbose = true
-{{- if .signingkey }}
+{{- if $signing }}
 	gpgsign = true
 
 [gpg]
@@ -179,7 +196,7 @@
 [gpg "ssh"]
 	allowedSignersFile = ~/.config/git/allowed_signers
 {{- end }}
-{{ if lookPath "delta" }}
+
 [interactive]
 	diffFilter = delta --color-only
 
@@ -187,8 +204,11 @@
 	navigate = true
 	line-numbers = true
 	side-by-side = true
+	# Theme này đến từ cache theme của bat (xem .chezmoiexternal.toml + script bat-cache),
+	# nên bat phải có mặt; cả hai đều nằm trong mise config.
 	syntax-theme = "Catppuccin Mocha"
-{{ end }}
+
+
 [alias]
 	# --- xem ---
 	s = status

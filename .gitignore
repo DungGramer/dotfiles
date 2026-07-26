@@ -1,0 +1,7 @@
+# Global ignore của máy chủ repo (~/.config/git/ignore) có rule `CLAUDE.md` — coi nó là
+# config cá nhân không thuộc về repo người khác. Rule đó áp cả vào repo này, làm
+# `git add CLAUDE.md` im lặng không làm gì.
+#
+# .gitignore cấp repo có độ ưu tiên CAO HƠN core.excludesfile, nên dòng phủ định này gỡ được.
+# Kiểm: `git check-ignore -v CLAUDE.md` phải không ra kết quả nào.
+!CLAUDE.md

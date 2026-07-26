@@ -1,0 +1,86 @@
+#!/bin/sh
+# Chặn đẩy thứ riêng tư lên repo PUBLIC (DungGramer/dotfiles).
+#
+# Bật cùng pre-commit:   git config core.hooksPath .githooks
+#
+# Vì sao hook này nằm ở .githooks/ chứ không phải .git/hooks/:
+# `core.hooksPath` THAY THẾ hoàn toàn .git/hooks — bật gate gitleaks (pre-commit) mà để
+# pre-push ở .git/hooks thì pre-push im lặng ngừng chạy. Đã đo: cùng một lệnh push,
+# hooksPath chưa đặt -> chặn; hooksPath=.githooks -> không chặn. Hai lưới an toàn phải
+# nằm chung một chỗ, nếu không bật cái này là tắt cái kia mà không có cảnh báo nào.
+#
+# Bổ sung cho gitleaks, không thay thế: gitleaks bắt secret dạng token/khoá, nhưng KHÔNG
+# biết một IP LAN hay domain nội bộ là riêng tư. Đó là việc của hook này.
+#
+# git truyền: $1 = tên remote, $2 = url. stdin: <local ref> <local sha> <remote ref> <remote sha>
+
+remote_name="$1"
+remote_url="$2"
+
+# Đường dẫn không bao giờ được lên public.
+PERSONAL_PATHS='^\.personal/|^private_dot_ssh/private_config\.local$'
+
+# Marker nội dung (IP LAN, domain riêng...) nạp từ file CHỈ có ở bản private.
+# Bản public không có file này -> chỉ chặn theo đường dẫn, và như vậy là đúng:
+# người khác fork repo không có lý do gì bị chặn bởi hạ tầng của người khác.
+PERSONAL_MARKERS=''
+markers_file="$(git rev-parse --show-toplevel)/.personal/leak-markers.txt"
+if [ -f "$markers_file" ]; then
+    PERSONAL_MARKERS=$(grep -vE '^\s*(#|$)' "$markers_file" | paste -sd '|' -)
+fi
+
+ZERO='0000000000000000000000000000000000000000'
+
+# Chỉ soi khi đích là repo public. Push lên remote private thì kệ.
+is_public=0
+[ "$remote_name" = "public" ] && is_public=1
+case "$remote_url" in
+    *DungGramer/dotfiles|*DungGramer/dotfiles.git) is_public=1 ;;
+esac
+[ "$is_public" -eq 1 ] || exit 0
+
+fail=0
+while read -r local_ref local_sha remote_ref remote_sha; do
+    # local_sha toàn số 0 = đang xoá nhánh trên remote, không có gì để soi
+    [ "$local_sha" = "$ZERO" ] && continue
+
+    # 1) File riêng tư nằm trong CÂY sắp push
+    found=$(git ls-tree -r --name-only "$local_sha" | grep -E "$PERSONAL_PATHS")
+    if [ -n "$found" ]; then
+        echo "!! CHẶN PUSH: $local_ref chứa file riêng tư:" >&2
+        echo "$found" | sed 's/^/     /' >&2
+        fail=1
+    fi
+
+    # 2) Marker trong bất kỳ commit MỚI nào của range.
+    #    Phải soi cả lịch sử chứ không chỉ cây cuối: xoá file ở commit sau là vô ích,
+    #    push lên rồi thì commit cũ vẫn nằm trong history public vĩnh viễn.
+    [ -z "$PERSONAL_MARKERS" ] && continue
+    if [ "$remote_sha" = "$ZERO" ]; then
+        revs=$(git rev-list "$local_sha" --not --remotes="$remote_name" 2>/dev/null)
+    else
+        revs=$(git rev-list "$remote_sha..$local_sha" 2>/dev/null)
+    fi
+    for c in $revs; do
+        if git grep -qE "$PERSONAL_MARKERS" "$c" -- 2>/dev/null; then
+            echo "!! CHẶN PUSH: commit $(git rev-parse --short "$c") chứa thông tin cá nhân" >&2
+            echo "   $(git log -1 --format=%s "$c")" >&2
+            fail=1
+            break
+        fi
+    done
+done
+
+if [ "$fail" -ne 0 ]; then
+    cat >&2 <<'MSG'
+
+   Đích đến là repo PUBLIC. Có thể bạn định:
+     .personal/scrub-to-public.sh          # dựng lại nhánh public-release đã cạo
+     git push public public-release:chezmoi
+
+   Nếu chắc chắn muốn bỏ qua (hiếm khi đúng): git push --no-verify
+MSG
+    exit 1
+fi
+
+exit 0

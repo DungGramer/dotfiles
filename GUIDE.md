@@ -245,17 +245,32 @@ exit                       # rời ra
 
 **Cài thêm công cụ** (qua mise, không cần sudo):
 ```bash
-mise use -g <tên>          # vd: mise use -g ripgrep
-chezmoi re-add ~/.config/mise/config.toml   # lưu vào cấu hình
+chezmoi edit ~/.config/mise/config.toml   # mở file nguồn; thêm vào mục [tools]: <tên> = "latest"
+chezmoi apply                             # ghi config + TỰ chạy `mise install`
 ```
+> ⚠️ ĐỪNG dùng `mise use -g <tên>`. Lệnh đó ghi thẳng vào `~/.config/mise/config.toml`,
+> mà file đó do chezmoi quản lý → lần `chezmoi apply` sau sẽ hỏi ghi đè, và ghi đè là
+> **mất công cụ vừa cài**. `chezmoi re-add` cũng không cứu được: file nguồn là *template*,
+> mà `re-add` thì bỏ qua template **trong im lặng** (báo thành công nhưng không lưu gì).
+> Đường duy nhất đúng là sửa file nguồn như trên.
+>
+> Công cụ nào không có bản cho OS bạn dùng thì bọc trong `{{ if ne .chezmoi.os "windows" }}`,
+> nếu không `mise install` sẽ báo lỗi mỗi lần apply. Xem `CLAUDE.md` mục "Bẫy đã trả giá".
 
 **Dựng máy mới** (5 năm sau / máy khác):
 ```bash
+ssh-keygen -t ed25519 -C "email@cua-ban"        # làm TRƯỚC, xem ghi chú bên dưới
 sh -c "$(curl -fsSL https://mise.run)"          # cài mise
 mise use -g chezmoi
 chezmoi init --apply git@github.com:DungGramer/dotfiles.git --branch chezmoi
-bash ~/.local/share/chezmoi/system-apps.sh      # app + driver hệ thống
+bash ~/.local/share/chezmoi/system-apps.sh      # CHỈ Linux: app + driver hệ thống
 ```
+> `chezmoi init` hỏi khoá ký commit, mặc định `.ssh/id_ed25519.pub`. Chưa có key thì
+> ký commit **tự tắt** (gitconfig sẽ ghi rõ lý do) — không sao, nhưng sinh key trước thì
+> được ký ngay. Sinh key sau cũng được: chạy lại `chezmoi apply` là tự bật.
+>
+> Nếu bạn để repo ở chỗ khác `~/.local/share/chezmoi` (dùng `chezmoi init --source=...`),
+> đường dẫn `system-apps.sh` ở trên đổi theo — `chezmoi source-path` sẽ cho biết chỗ thật.
 
 ---
 

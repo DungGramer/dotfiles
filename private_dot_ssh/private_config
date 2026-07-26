@@ -1,5 +1,11 @@
 # ~/.ssh/config — quản lý bởi chezmoi (private_dot_ssh/private_config)
 
+# Host riêng tư (NAS, máy công ty, hạ tầng nội bộ) — KHÔNG nằm trong repo public.
+# Đặt Include ở ĐẦU file là cố ý: với phần lớn từ khoá, ssh lấy giá trị BẮT ĐƯỢC
+# ĐẦU TIÊN, nên khai ở đây thì host riêng mới đè được `Host *` bên dưới.
+# ssh im lặng bỏ qua nếu file không tồn tại, nên ai clone repo public về vẫn chạy.
+Include ~/.ssh/config.local
+
 # Cài đặt chung
 Host *
     AddKeysToAgent yes
@@ -11,7 +17,7 @@ Host *
 Host github.com
     HostName github.com
     User git
-    IdentityFile ~/.ssh/id_ed25519_github
+    IdentityFile ~/.ssh/id_ed25519
 
 # Identity riêng cho công ty (bỏ comment khi cần, nhớ sinh key id_ed25519_work):
 #   git remote dùng URL: git@github-work:Org/repo.git

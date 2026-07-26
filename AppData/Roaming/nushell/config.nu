@@ -442,10 +442,20 @@ $env.config.completions.external = {
 # -------------------- Starship Prompt Integration --------------------
 # Ensure starship is installed and set up autoload
 mkdir ($nu.data-dir | path join "vendor/autoload")
-starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.nu")
+# Guard `which`: thiếu starship mà gọi thẳng là config.nu dừng ngay tại đây, kéo theo
+# mấy dòng `source` bên dưới không chạy -> mất luôn zoxide/mise/atuin.
+if (which starship | is-not-empty) {
+    starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.nu")
+}
 
 # Zoxide (smart cd)
 source ~/.zoxide.nu
 
 # Carapace (shell completion)
 source $"($nu.cache-dir)/carapace.nu"
+
+# mise (version manager) — file do env.nu sinh ra
+source ~/.mise.nu
+
+# atuin (lịch sử thông minh, Ctrl-R) — file do env.nu sinh ra
+source ~/.atuin.nu

@@ -4,9 +4,22 @@
 {{- $email := promptStringOnce . "email" "Email (dùng cho git)" -}}
 {{- $signingkey := promptStringOnce . "signingkey" "SSH public key để ký commit, tính từ $HOME (để trống = không ký)" ".ssh/id_ed25519.pub" -}}
 
+# Ghi lại source dir đã dùng lúc `chezmoi init --source=...`, để các lệnh sau
+# (`chezmoi apply`, `chezmoi edit`) không cần lặp lại cờ --source. Máy nào để repo
+# ở đâu thì tự ghi ra đó, không hardcode, nên vẫn dùng chung được giữa các máy.
+sourceDir = {{ .chezmoi.sourceDir | quote }}
+
 [data]
     name = {{ $name | quote }}
     email = {{ $email | quote }}
     # Tên file key khác nhau tuỳ máy nên phải hỏi, không đoán được.
     # Để rỗng thì toàn bộ phần ký commit trong ~/.gitconfig tự tắt.
     signingkey = {{ $signingkey | quote }}
+{{ if eq .chezmoi.os "windows" }}
+# Script trong .chezmoiscripts/ là .sh; Windows không tự chạy được, phải chỉ interpreter.
+# Đường dẫn ghi thẳng, KHÔNG dùng `lookPath "bash"`: trên Windows `bash` thường trúng
+# C:\Windows\System32\bash.exe (stub WSL) — nó chạy trong rootfs Linux nên không hiểu
+# đường dẫn file script phía Windows mà chezmoi truyền vào.
+[interpreters.sh]
+    command = "C:/Program Files/Git/bin/bash.exe"
+{{ end }}

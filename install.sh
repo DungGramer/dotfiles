@@ -28,7 +28,10 @@ mise reshim 2>/dev/null || true
 
 echo "==> 4/6  chezmoi init + apply (hỏi tên/email, ghi config, clone plugin, cài tool)…"
 # --apply sẽ: clone repo -> sinh config -> apply dotfiles -> chạy run_onchange (mise install)
-mise exec -- chezmoi init --apply "$DOTFILES_REPO"
+# --branch BẮT BUỘC: nhánh mặc định của repo là `master` (bản dotfiles cũ, định dạng phẳng),
+# KHÔNG phải source của chezmoi. Thiếu cờ này thì chezmoi coi master là source và đổ
+# ~/README.md, ~/nvim/, ~/nushell/ vào $HOME, còn dotfile thật thì không cài cái nào.
+mise exec -- chezmoi init --apply --branch "${DOTFILES_BRANCH:-chezmoi}" "$DOTFILES_REPO"
 
 echo "==> 5/6  Cài Nerd Font (Monaspace) nếu chưa có…"
 if ! fc-list | grep -qi "Monaspace.*NF"; then

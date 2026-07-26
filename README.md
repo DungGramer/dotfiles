@@ -25,19 +25,25 @@ Mọi thứ còn lại là một config cho mọi máy.
 
 ## Máy mới — 1 lệnh
 
+Script `install.sh` chỉ dành cho **Ubuntu/Debian** (nó dùng `apt-get` + `chsh`):
+
 ```bash
-DOTFILES_REPO=<git-url-repo-này> bash <(curl -fsSL <raw-url>/install.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/DungGramer/dotfiles/chezmoi/install.sh)
 ```
 
-hoặc thủ công:
+Cách thủ công (mọi OS — Linux, macOS, Windows):
 
 ```bash
 sh -c "$(curl -fsSL https://mise.run)"          # cài mise
 mise use -g chezmoi
-chezmoi init --apply <git-url-repo-này>          # clone + hỏi tên/email + apply + cài tool
-chsh -s "$(which zsh)"                            # zsh làm mặc định
+chezmoi init --apply --branch chezmoi https://github.com/DungGramer/dotfiles.git
+chsh -s "$(which zsh)"                            # Linux/macOS: zsh làm mặc định
 nvim                                              # LazyVim tự cài plugin
 ```
+
+> ⚠️ `--branch chezmoi` là **bắt buộc**. Nhánh mặc định của repo là `master` — đó là bản
+> dotfiles cũ định dạng phẳng, không phải source của chezmoi. Thiếu cờ này thì chezmoi
+> đổ `~/README.md`, `~/nvim/`, `~/nushell/` vào `$HOME` mà **không cài dotfile nào**.
 
 ## Dùng hằng ngày
 
@@ -46,10 +52,16 @@ chezmoi edit ~/.zshrc        # sửa một dotfile (mở trong source)
 chezmoi apply                # áp dụng thay đổi vào $HOME
 chezmoi diff                 # xem trước thay đổi
 chezmoi cd                   # vào thư mục source (git repo)
-chezmoi re-add               # cập nhật source từ file đã sửa tay trong $HOME
+chezmoi re-add               # cập nhật source từ file đã sửa tay trong $HOME (BỎ QUA template!)
 ```
 
-Thêm tool mới: `mise use -g <tool>` → `chezmoi re-add ~/.config/mise/config.toml`.
+Thêm tool mới: `chezmoi edit ~/.config/mise/config.toml` → thêm `<tool> = "latest"` vào `[tools]`
+→ `chezmoi apply` (tự chạy `mise install`).
+
+> Đừng dùng `mise use -g <tool>` + `chezmoi re-add`: mise config là *template*, mà `re-add`
+> bỏ qua template **trong im lặng** — báo thành công nhưng không lưu gì. Còn `mise use -g`
+> ghi thẳng vào `~/.config/mise/config.toml` (file do chezmoi quản lý) nên lần `apply` sau
+> ghi đè là mất tool vừa cài. Xem `GUIDE.md` §9.
 
 ## Cấu trúc
 
