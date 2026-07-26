@@ -269,6 +269,16 @@ bash ~/.local/share/chezmoi/system-apps.sh      # CHỈ Linux: app + driver hệ
 > ký commit **tự tắt** (gitconfig sẽ ghi rõ lý do) — không sao, nhưng sinh key trước thì
 > được ký ngay. Sinh key sau cũng được: chạy lại `chezmoi apply` là tự bật.
 >
+> **Nếu `mise install` báo `403` / `GitHub rate limit exceeded`**: mise tải nhiều tool qua
+> GitHub API, mà request ẩn danh chỉ được 60 lần/giờ nên dễ cạn khi dựng máy mới. Đặt token
+> rồi apply lại là xong:
+> ```bash
+> gh auth login                               # hoặc tạo token trống-scope tại github.com/settings/tokens
+> export GITHUB_TOKEN=$(gh auth token)
+> chezmoi apply                               # cài nốt tool còn thiếu
+> ```
+> Đây là giới hạn của GitHub, không phải lỗi config — tool đã cài được thì không phải làm lại.
+>
 > Nếu bạn để repo ở chỗ khác `~/.local/share/chezmoi` (dùng `chezmoi init --source=...`),
 > đường dẫn `system-apps.sh` ở trên đổi theo — `chezmoi source-path` sẽ cho biết chỗ thật.
 
