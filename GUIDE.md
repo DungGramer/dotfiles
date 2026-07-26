@@ -265,6 +265,15 @@ mise use -g chezmoi
 chezmoi init --apply git@github.com:DungGramer/dotfiles.git --branch chezmoi
 bash ~/.local/share/chezmoi/system-apps.sh      # CHỈ Linux: app + driver hệ thống
 ```
+Trên **Windows**, sau `chezmoi init --apply` chạy thêm (cài font terminal Cascadia Code NF):
+```powershell
+powershell -ExecutionPolicy Bypass -File "$(chezmoi source-path)\system-fonts.ps1"
+```
+> Vì sao font phải là script riêng chứ không do `chezmoi apply` lo: Windows Terminal
+> (DirectWrite) **không thấy font cài per-user** — phải machine-wide (`C:\Windows\Fonts`),
+> mà cái đó cần admin, còn `chezmoi apply` chạy non-elevated. Script tự xin UAC đúng bước
+> machine-wide. Cài xong **thoát hẳn** Windows Terminal (đóng mọi cửa sổ) rồi mở lại.
+> Muốn đậm/mảnh hơn: sửa `weight` trong WT settings sang số 400–600 (font variable nhận số).
 > `chezmoi init` hỏi khoá ký commit, mặc định `.ssh/id_ed25519.pub`. Chưa có key thì
 > ký commit **tự tắt** (gitconfig sẽ ghi rõ lý do) — không sao, nhưng sinh key trước thì
 > được ký ngay. Sinh key sau cũng được: chạy lại `chezmoi apply` là tự bật.
