@@ -1,3 +1,11 @@
+{{- /* Mac Intel (darwin/amd64): một số tool KHÔNG có bản build cho kiến trúc này.
+       Thượng nguồn chỉ còn phát hành darwin/arm64 (Apple Silicon) — aqua báo thẳng
+       "unsupported env: darwin/amd64". Để ngoài guard thì `mise install` FAIL TOÀN BỘ
+       trên máy Intel, kéo theo cả `chezmoi apply` báo lỗi.
+       Trên máy đó cài bằng Homebrew (có bottle x86_64), zsh/git tự tìm thấy trên PATH:
+           brew install git-delta fd eza atuin btop
+       Máy Apple Silicon và Linux không đụng gì tới nhánh này. */ -}}
+{{- $macIntel := and (eq .chezmoi.os "darwin") (eq .chezmoi.arch "amd64") -}}
 # Version pin cứng, KHÔNG dùng "latest".
 #
 # Lý do: mục tiêu của repo này là máy mới ra giống hệt máy cũ, và người khác clone về
@@ -18,12 +26,16 @@ tree-sitter = "0.26.11"
 # Git
 lazygit = "0.63.0"
 gh = "2.96.0"
+{{- if not $macIntel }}
 delta = "0.19.2"
+{{- end }}
 # Quét secret cho hook .githooks/pre-commit
 gitleaks = "8.30.1"
 
 # Shell / CLI
+{{- if not $macIntel }}
 atuin = "18.17.0"
+{{- end }}
 direnv = "2.37.1"
 jq = "1.8.2"
 yq = "4.53.3"
@@ -45,13 +57,17 @@ lazydocker = "0.25.2"
 # thì vỡ hẳn config vì `source` là parse-time.
 bat = "0.26.1"
 ripgrep = "15.1.0"
+{{- if not $macIntel }}
 fd = "10.4.2"
+{{- end }}
 zoxide = "0.10.0"
 starship = "1.26.0"
 fzf = "0.74.0"
 # eza phải chỉ đích danh backend ubi: registry của mise chỉ map eza -> cargo:eza,
 # mà build bằng cargo thì cần sẵn Rust toolchain. ubi lấy thẳng binary từ GitHub release.
+{{- if not $macIntel }}
 "ubi:eza-community/eza" = "0.23.5"
+{{- end }}
 {{- if eq .chezmoi.os "windows" }}
 # Chỉ Windows: carapace là completion cho nushell; bên zsh dùng fzf-tab nên không cần.
 carapace = "1.7.3"
@@ -60,7 +76,9 @@ carapace = "1.7.3"
 
 # Thượng nguồn không phát hành bản Windows (mise báo "unsupported env: windows/amd64").
 # Để ngoài guard thì `mise install` fail trên MỌI máy Windows, không riêng máy nào.
+{{- if not $macIntel }}
 btop = "1.4.7"
+{{- end }}
 jless = "0.9.0"
 {{- end }}
 

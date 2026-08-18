@@ -187,3 +187,9 @@ zle_highlight=('paste:none')
 if (( $+widgets[bracketed-paste] )); then
   bindkey '^[[200~' bracketed-paste
 fi
+
+# ───────────────────── Cấu hình riêng của máy (không commit) ──────────────
+# ~/.zshrc.local: proxy công ty, token, PATH nội bộ… — repo này public nên
+# những thứ đó KHÔNG lên đây (cùng nguyên tắc với ~/.config/git/config-local).
+# Không có file thì bỏ qua trong im lặng, nên máy nào clone về cũng chạy được.
+[[ -f $HOME/.zshrc.local ]] && source $HOME/.zshrc.local

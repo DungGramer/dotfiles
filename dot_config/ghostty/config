@@ -62,3 +62,10 @@ keybind = ctrl+shift+k=clear_screen
 # Nhảy giữa các lần chạy lệnh (nhờ shell-integration OSC133) — hữu ích khi KHÔNG ở trong tmux
 keybind = ctrl+shift+up=jump_to_prompt:-1
 keybind = ctrl+shift+down=jump_to_prompt:1
+
+# ─────────────── Cấu hình riêng của máy (không commit) ────────────────
+# Tiền tố "?" = tuỳ chọn: Ghostty bỏ qua trong im lặng nếu file không tồn tại.
+# Đặt CUỐI file để giá trị trong đó đè lên phần dùng chung ở trên.
+# Dùng cho những thứ khác nhau theo máy: tên font (Nerd Fonts đặt tên khác nhau
+# giữa Linux và macOS), font-size theo độ phân giải màn hình…
+config-file = ?config.local
