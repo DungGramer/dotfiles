@@ -11,12 +11,12 @@ Plug 'sbdchd/neoformat'  " Formatting Code
 Plug 'preservim/nerdtree' " File tree
 if has("nvim")
   " Dashboard
-  Plug 'glepnir/dashboard-nvim'
+  Plug 'nvimdev/dashboard-nvim'
 
   Plug 'kristijanhusak/defx-git'
   Plug 'kristijanhusak/defx-icons'
   Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
-  Plug 'tami5/lspsaga.nvim'
+  Plug 'nvimdev/lspsaga.nvim'
   Plug 'folke/lsp-colors.nvim'
   Plug 'L3MON4D3/LuaSnip'
 
@@ -27,12 +27,13 @@ if has("nvim")
   Plug 'onsails/lspkind-nvim'
 
 
-  Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
+  Plug 'nvim-treesitter/nvim-treesitter', { 'branch': 'main', 'do': ':TSUpdate' }
   Plug 'ryanoasis/vim-devicons'
 
   " Language Server Protocol
   Plug 'neovim/nvim-lspconfig'
-  Plug 'williamboman/nvim-lsp-installer'
+  Plug 'mason-org/mason.nvim'
+  Plug 'mason-org/mason-lspconfig.nvim'
   Plug 'folke/trouble.nvim' " showing diagnostics, errors, warnings
   "Plug 'creativenull/diagnosticls-configs-nvim'
 
@@ -63,7 +64,7 @@ if has("nvim")
   Plug 'windwp/nvim-autopairs'
   Plug 'windwp/nvim-ts-autotag'
 
-  Plug 'norcalli/nvim-colorizer.lua' " Show hex color
+  Plug 'catgoose/nvim-colorizer.lua' " Show hex color
 
 
   " tmux plugins

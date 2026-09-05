@@ -7,17 +7,19 @@ lua << EOF
 EOF
 
 lua << EOF
-local nvim_lsp = require('lspconfig')
+-- nvim-lspconfig's `require('lspconfig')` framework is deprecated since
+-- Neovim 0.11 and drops in v3.0.0; servers are declared with
+-- `vim.lsp.config()` and turned on with `vim.lsp.enable()` instead.
+-- The plugin still ships the per-server defaults these merge into.
 local protocol = require'vim.lsp.protocol'
 
 -- Use an on_attach function to only map the following keys 
 -- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)
   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
   --Enable completion triggered by <c-x><c-o>
-  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+  vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc'
 
   -- Mappings.
   local opts = { noremap=true, silent=true }
@@ -35,22 +37,25 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   --buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+  buf_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
   --buf_set_keymap('n', '<C-j>', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-  buf_set_keymap('n', '<S-C-j>', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-  buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-  buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+  buf_set_keymap('n', '<S-C-j>', '<cmd>lua vim.diagnostic.jump({ count = 1, float = true })<CR>', opts)
+  buf_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
+  buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.format({ async = true })<CR>", opts)
 
   -- formatting
-  if client.name == 'tsserver' then
-    client.resolved_capabilities.document_formatting = false
+  if client.name == 'ts_ls' then
+    client.server_capabilities.documentFormattingProvider = false
   end
 
-  if client.resolved_capabilities.document_formatting then
-    vim.api.nvim_command [[augroup Format]]
-    vim.api.nvim_command [[autocmd! * <buffer>]]
-    vim.api.nvim_command [[autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_seq_sync()]]
-    vim.api.nvim_command [[augroup END]]
+  if client.server_capabilities.documentFormattingProvider then
+    local group = vim.api.nvim_create_augroup('Format', { clear = false })
+    vim.api.nvim_clear_autocmds { group = group, buffer = bufnr }
+    vim.api.nvim_create_autocmd('BufWritePre', {
+      group = group,
+      buffer = bufnr,
+      callback = function() vim.lsp.buf.format { bufnr = bufnr, async = false } end,
+    })
   end
 
   --protocol.SymbolKind = { }
@@ -85,22 +90,20 @@ end
 
 
 -- Set up completion using nvim_cmp with LSP source
-local capabilities = require('cmp_nvim_lsp').update_capabilities(
-  vim.lsp.protocol.make_client_capabilities()
-)
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
-nvim_lsp.flow.setup {
+vim.lsp.config('flow', {
   on_attach = on_attach,
   capabilities = capabilities
-}
+})
 
-nvim_lsp.tsserver.setup {
+vim.lsp.config('ts_ls', {
   on_attach = on_attach,
   filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
   capabilities = capabilities
-}
+})
 
-nvim_lsp.diagnosticls.setup {
+vim.lsp.config('diagnosticls', {
   on_attach = on_attach,
   filetypes = { 'javascript', 'javascriptreact', 'json', 'typescript', 'typescriptreact', 'css', 'less', 'scss', 'pandoc' },
   init_options = {
@@ -158,18 +161,20 @@ nvim_lsp.diagnosticls.setup {
       json = 'prettier',
     }
   }
-}
+})
+
+vim.lsp.enable({ 'flow', 'ts_ls', 'diagnosticls' })
 
 -- icon
-vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-  vim.lsp.diagnostic.on_publish_diagnostics, {
-    underline = true,
-    -- This sets the spacing and the prefix, obviously.
-    virtual_text = {
-      spacing = 4,
-      prefix = ''
-    }
+-- The `textDocument/publishDiagnostics` handler override was removed in
+-- Neovim 0.10; diagnostic display is configured globally instead.
+vim.diagnostic.config {
+  underline = true,
+  -- This sets the spacing and the prefix, obviously.
+  virtual_text = {
+    spacing = 4,
+    prefix = ''
   }
-)
+}
 
 EOF

@@ -32,7 +32,7 @@ set expandtab
 "let loaded_matchparen = 1
 if has("win32") || has("win64") || has("win16")
   set shell=cmd
-elseif has("mac")
+elseif has("mac") && executable('fish')
   set shell=fish
 endif
 set backupskip=/tmp/*,/private/tmp/*

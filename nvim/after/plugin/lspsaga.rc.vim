@@ -1,22 +1,28 @@
-if !exists('g:loaded_lspsaga') | finish | endif
-
 lua << EOF
-local saga = require 'lspsaga'
+-- `tami5/lspsaga.nvim` was abandoned; this is the maintained `nvimdev` fork,
+-- where `init_lsp_saga()` was replaced by a plain `setup()` and the sign
+-- glyphs moved under `diagnostic`.
+local ok, saga = pcall(require, 'lspsaga')
+if (not ok) then return end
 
-saga.init_lsp_saga {
-  error_sign = '',
-  warn_sign = '',
-  hint_sign = '',
-  infor_sign = '',
-  border_style = "round",
+saga.setup {
+  ui = {
+    border = 'rounded',
+  },
+  diagnostic = {
+    signs = {
+      error = ' ',
+      warn  = ' ',
+      hint  = ' ',
+      info  = ' ',
+    },
+  },
 }
-
 EOF
 
 nnoremap <silent> <C-j> <Cmd>Lspsaga diagnostic_jump_next<CR>
 nnoremap <silent>K <Cmd>Lspsaga hover_doc<CR>
-"nnoremap <silent> K <Cmd>lua require('lspsaga.hover').render_hover_doc()<CR>
 inoremap <silent> <C-k> <Cmd>Lspsaga signature_help<CR>
-nnoremap <silent> gh <Cmd>Lspsaga lsp_finder<CR>
-nnoremap <silent> gp <Cmd>Lspsaga preview_definition<CR>
+nnoremap <silent> gh <Cmd>Lspsaga finder<CR>
+nnoremap <silent> gp <Cmd>Lspsaga peek_definition<CR>
 nnoremap <silent> gr <Cmd>Lspsaga rename<CR>

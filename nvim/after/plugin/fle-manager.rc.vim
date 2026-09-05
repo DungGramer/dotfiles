@@ -45,8 +45,13 @@ lua require'colorizer'.setup()
 
 " nvim-tree {{{
 lua << EOF
+-- `ignore_ft_on_setup` was removed from nvim-tree; the equivalent is to not
+-- hijack the startup buffer for these filetypes.
 require'nvim-tree'.setup {
-  ignore_ft_on_setup  = { 'startify', 'dashboard' },
+  hijack_directories = {
+    enable = true,
+    auto_open = true,
+  },
 }
 EOF
 nnoremap <C-n> :NvimTreeToggle<CR>
