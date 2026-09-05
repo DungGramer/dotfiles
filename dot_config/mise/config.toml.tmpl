@@ -6,6 +6,14 @@
            brew install git-delta fd eza atuin btop
        Máy Apple Silicon và Linux không đụng gì tới nhánh này. */ -}}
 {{- $macIntel := and (eq .chezmoi.os "darwin") (eq .chezmoi.arch "amd64") -}}
+{{- /* Hai tool dưới đây không có bản macOS NÀO, kể cả Apple Silicon:
+         eza  -> GitHub release chỉ phát hành asset linux + windows
+         btop -> aqua báo `unsupported env: darwin/arm64 (supported: ["linux"])`
+       Guard bằng $macIntel là chưa đủ: máy Apple Silicon vẫn cố cài rồi
+       `mise install` fail, kéo `chezmoi apply` fail theo. Trên mac cài bằng
+       Homebrew (cả hai đều có bottle arm64 + x86_64):
+           brew install eza btop */ -}}
+{{- $mac := eq .chezmoi.os "darwin" -}}
 # Version pin cứng, KHÔNG dùng "latest".
 #
 # Lý do: mục tiêu của repo này là máy mới ra giống hệt máy cũ, và người khác clone về
@@ -65,7 +73,7 @@ starship = "1.26.0"
 fzf = "0.74.0"
 # eza phải chỉ đích danh backend ubi: registry của mise chỉ map eza -> cargo:eza,
 # mà build bằng cargo thì cần sẵn Rust toolchain. ubi lấy thẳng binary từ GitHub release.
-{{- if not $macIntel }}
+{{- if not $mac }}
 "ubi:eza-community/eza" = "0.23.5"
 {{- end }}
 {{- if eq .chezmoi.os "windows" }}
@@ -76,7 +84,7 @@ carapace = "1.7.3"
 
 # Thượng nguồn không phát hành bản Windows (mise báo "unsupported env: windows/amd64").
 # Để ngoài guard thì `mise install` fail trên MỌI máy Windows, không riêng máy nào.
-{{- if not $macIntel }}
+{{- if not $mac }}
 btop = "1.4.7"
 {{- end }}
 jless = "0.9.0"
