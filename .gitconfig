@@ -120,3 +120,9 @@
 	rmdir = true
 [feature]
 	manyFiles = true # enable a newer index file version that is smaller in size and thus gets rewritten faster after modifying files in the index
+
+[include]
+	# Machine-local settings: identity, editor, and anything else that must not
+	# be committed to a public repo. Git silently skips this if the file is
+	# absent, so the same .gitconfig works on a machine that has no local file.
+	path = ~/.gitconfig.local
