@@ -21,8 +21,10 @@ if type brew &>/dev/null; then
 fi
 
 # Atuin config
-. "$HOME/.atuin/bin/env"
-eval "$(atuin init zsh)"
+# `~/.atuin/bin/env` only exists when atuin came from its install script;
+# a Homebrew atuin is already on PATH and ships no such file.
+[ -f "$HOME/.atuin/bin/env" ] && . "$HOME/.atuin/bin/env"
+command -v atuin >/dev/null && eval "$(atuin init zsh)"
 
 # Lazy NVM
 source ~/.nvm/nvm.sh
@@ -96,6 +98,14 @@ alias pag='pnpm add -g'
 alias pr='pnpm remove'
 alias prg='pnpm remove -g'
 alias pf='pnpm -r --filter'
+
+# pnpm global binaries live here on macOS; without PNPM_HOME `pnpm add -g`
+# fails with "Unable to find the global bin directory".
+export PNPM_HOME="$HOME/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
 
 ## Image Optimizer
 alias iow="npx @squoosh/cli --webp auto " # +file-name
